@@ -1,50 +1,13 @@
+Didn't get to writing a proper doc yet, but here is a basic overview:
+
 # Core
-  ## Application 
-  ## Clock
-  ## Core
-  ## EntryPoint
-
-# Graphics
-  ## Renderer
-
-  ## Batch
-  ## Quad
-  ## Rect
-
-  ## MonospaceFont
-  ## MonospaceText
-
-  ## Vertex
-  ## Shader
-  ## VertexArray
-  ## VertexBuffer
-  ## IndexBuffer
-  ## TextureManager
+There are located some basic classes and funtions, such as EntryPoint, Application class, Window class and etc.
 
 # Input
-  ## Keyboard
-  ## Mouse
+Some functions for keyboard and mouse states there.
 
-# Logging
+# Renderer
+Functions and classes for using OpenGl and batch rendering.
 
----
-
-REFACTOR:
-
-# Entry Point
-Creates the instance of application and runs it.
-EntryPoint -> Application
-# App Lifecycle:
-defaultOnInit -> OnInit -> defaultRun [OnUpdate] -> OnExit -> defaultOnExit
-
-Application:
-  Window*
-  Renderer*
-  Input*
-
-# Window
-
-----------
 # ECS
-
-Entity:
+Entity Component System.
