@@ -1,9 +1,0 @@
-!"#$%&'()*+,-./:;<=>?[\]^_`{|}~@
-0123456789                      
-abcdefghijklmnopqrstyvwxyz      
-ABCDEFGHIJKLMNOPQRSTUVWXYZ      
-!"#$%&'()*+,-./:;<=>?[\]^_`{|}~@
-0123456789                      
-abcdefghijklmnopqrstyvwxyz      
-ABCDEFGHIJKLMNOPQRSTUVWXYZ      
-                                
