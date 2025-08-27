@@ -1,0 +1,50 @@
+#version 330 core
+
+// Inputs from vertex shader (unused in this test)
+in vec3 vNormal;
+in vec2 vTexCoords;
+
+in vec3 vFragPos;  
+in vec3 vViewPos;  
+
+out vec4 FragColor;
+
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+}; 
+  
+uniform Material material;
+
+void main()
+{
+
+    vec3 lightColor = vec3(1, 1, 1);
+    
+    vec3 lightPos = vec3(0.0, 0.0, 0.0);
+    vec3 norm = normalize(vNormal);
+    vec3 lightDir = normalize(lightPos - vFragPos); 
+
+    //diffuse
+    float diff = max(dot(norm, lightDir), 0.0);
+    //ambient
+    vec3 amb = lightColor;
+    //specular
+    vec3 viewDir = normalize(vViewPos - vFragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess*128);
+
+    
+    //vec3 ambient  = light.ambient * material.ambient;
+    //vec3 diffuse  = light.diffuse * (diff * material.diffuse);
+    //vec3 specular = light.specular * (spec * material.specular);  
+
+    vec3 ambient  = 0.3 * material.ambient*amb;
+    vec3 diffuse  = 0.8 * material.diffuse*diff;
+    vec3 specular = 1.0 * material.specular*spec;  
+    
+    FragColor = vec4((ambient + diffuse + specular), 1.0) ;
+    FragColor.a = 1.0;
+}
