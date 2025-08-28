@@ -1,4 +1,5 @@
 add_library(Renderer Camera.h Material.h Renderer.h Renderer.cpp Renderer_params.h Color.h TextureManager.h
+	Mesh.h Mesh.cpp Model.h Model.cpp Texture.h
 	Essentials/Essentials.h Essentials/IndexBuffer.h Essentials/Shader.h Essentials/Vertex.h Essentials/VertexArray.h Essentials/VertexBuffer.h
 )
 
@@ -11,4 +12,5 @@ target_link_libraries(Renderer PRIVATE Input)
 target_link_libraries(Renderer PRIVATE glad)
 target_link_libraries(Renderer PRIVATE glfw)
 target_link_libraries(Renderer PRIVATE glm)
+target_link_libraries(Renderer PRIVATE assimp)
 target_link_libraries(Renderer PRIVATE Core)
