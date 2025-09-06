@@ -7,6 +7,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Camera.h"
+#include "Model.h"
 
 //#include "./TextureManager/TextureManager.h"
 //#include "./Batch/Batch.h"
@@ -18,7 +19,10 @@ namespace salt {
 	class Renderer
 	{
 	private:
-		
+
+		//REMOVE LATER
+		inline static Model* backpack;
+
 		//currently material for all objects
 		inline static Material mat = Material(glm::vec3(0.5375,0.05,0.06625), 
 																					glm::vec3(0.18275 ,0.17 ,0.22525), 

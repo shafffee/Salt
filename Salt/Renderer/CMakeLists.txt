@@ -5,6 +5,8 @@ add_library(Renderer Camera.h Material.h Renderer.h Renderer.cpp Renderer_params
 
 target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Essentials)
+target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/assimp/include/)
+
 
 target_link_libraries(Renderer PRIVATE Logging)
 target_link_libraries(Renderer PRIVATE Utils)
@@ -12,5 +14,4 @@ target_link_libraries(Renderer PRIVATE Input)
 target_link_libraries(Renderer PRIVATE glad)
 target_link_libraries(Renderer PRIVATE glfw)
 target_link_libraries(Renderer PRIVATE glm)
-target_link_libraries(Renderer PRIVATE assimp)
 target_link_libraries(Renderer PRIVATE Core)

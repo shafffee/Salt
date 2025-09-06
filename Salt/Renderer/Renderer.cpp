@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "VertexArray.h"
 #include "Input.h"
+#include "Model.h"
 #include "ObjLoader.h"
 
 
@@ -89,6 +90,7 @@ namespace salt {
 		_indices.push_back(_verticies.size() - 2);
 		_indices.push_back(_verticies.size() - 1);
 	}
+
 	void Renderer::Init()
 	{
 		
@@ -103,15 +105,17 @@ namespace salt {
 
 		default_shader = Shader(read_file("./Salt/res/shaders/default.vs"), read_file("./Salt/res/shaders/default.fs"));
 		//load_obj(&_verticies, &_indices, read_file("./Salt/res/models/test_model.obj"), glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f)) );
-		salt::Utils::load_obj(&_verticies, &_indices, read_file("./Salt/res/models/dragon.obj"), glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, -10.0f)) );
+		//salt::Utils::load_obj(&_verticies, &_indices, read_file("./Salt/res/models/backpack/backpack.obj"), glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, -10.0f)) );
 
 		//texture_manager = new TextureManager();
 		//batch = new Batch();
 		//font_manager = new FontManager();
+		backpack = new Model("./Salt/res/models/backpack/backpack.obj");
 
 	}
+
 	void Renderer::Update() {
-		
+
 		// Get window dimensions
 		int width, height;
 		glfwGetWindowSize(salt::Window::getGLFWwindow(), &width, &height);
@@ -178,7 +182,9 @@ namespace salt {
 		//glm::vec2 TexCoords;
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
-		
+
+		backpack->Draw(default_shader);
+
 
 		glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
 
