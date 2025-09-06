@@ -16,5 +16,6 @@ xcopy build\include\ include\ /E /Y
 
 REM # copy lib file
 xcopy build\lib\Debug\ lib\ /E /Y
+xcopy build\contrib\zlib\Debug lib\ /E /Y
 
 pause

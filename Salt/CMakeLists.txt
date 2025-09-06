@@ -7,22 +7,6 @@ add_subdirectory(Vendor/assimp)
 
 find_package(OpenGL REQUIRED)
 
-#Assimp
-add_library(assimp STATIC IMPORTED)
-set_target_properties(assimp PROPERTIES
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/assimp/lib/assimp-vc143-mt.lib
-)
-#idk why is it here
-add_library(unit STATIC IMPORTED)
-set_target_properties(unit PROPERTIES
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/assimp/lib/unit.lib
-)
-#zlib
-add_library(zlib STATIC IMPORTED)
-set_target_properties(zlib PROPERTIES
-    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/Vendor/assimp/lib/zlibstaticd.lib
-)
-
 
 # My libs
 add_subdirectory(Logging/)
@@ -37,6 +21,7 @@ add_library(Salt Salt.h Salt.cpp)
 target_include_directories(Salt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 										${CMAKE_CURRENT_SOURCE_DIR}/Vendor/assimp/include/) #assimp
 target_link_libraries(Salt PUBLIC
-	OpenGL::GL glfw glad glm::glm-header-only stb_image unit assimp zlib
-	Logging ECS Utils Renderer Core Input
+	OpenGL::GL glfw glad glm::glm-header-only stb_image 	#vendor
+	unit assimp zlib										#assimp
+	Logging ECS Utils Renderer Core Input					#my things
 )
