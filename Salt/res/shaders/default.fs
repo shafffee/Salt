@@ -1,11 +1,9 @@
 #version 330 core
 
-// Inputs from vertex shader (unused in this test)
 in vec3 vNormal;
 in vec2 vTexCoords;
-
-in vec3 vFragPos;  
-in vec3 vViewPos;  
+in vec3 vFragPos;
+in vec3 vViewPos;
 
 out vec4 FragColor;
 
@@ -14,8 +12,12 @@ struct Material {
     vec3 diffuse;
     vec3 specular;
     float shininess;
+
+    sampler2D texture_diffuse1;
+    sampler2D texture_diffuse2;
+    sampler2D texture_specular1;
+    sampler2D texture_specular2;
 }; 
-  
 uniform Material material;
 
 void main()
@@ -43,8 +45,10 @@ void main()
 
     vec3 ambient  = 0.3 * material.ambient*amb;
     vec3 diffuse  = 0.8 * material.diffuse*diff;
-    vec3 specular = 1.0 * material.specular*spec;  
+    vec3 specular = 1.0 * material.specular*spec;
     
     FragColor = vec4((ambient + diffuse + specular), 1.0) ;
     FragColor.a = 1.0;
+
+    FragColor = texture(material.texture_diffuse1, vTexCoords);
 }

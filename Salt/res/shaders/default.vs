@@ -10,11 +10,6 @@ out vec2 vTexCoords;
 out vec3 vFragPos; 
 out vec3 vViewPos; 
 
-out vec3 mAmbient;
-out vec3 mDiffuse;
-out vec3 mSpecular;
-out float mShininess;
-
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
