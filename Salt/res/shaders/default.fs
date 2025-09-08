@@ -18,12 +18,13 @@ struct Material {
     sampler2D texture_specular1;
     sampler2D texture_specular2;
 }; 
+
 uniform Material material;
 
 void main()
 {
 
-    vec3 lightColor = vec3(1, 1, 1);
+    vec4 lightColor = vec4(1, 1, 1, 1);
     
     vec3 lightPos = vec3(0.0, 0.0, 0.0);
     vec3 norm = normalize(vNormal);
@@ -32,7 +33,7 @@ void main()
     //diffuse
     float diff = max(dot(norm, lightDir), 0.0);
     //ambient
-    vec3 amb = lightColor;
+    vec4 amb = lightColor;
     //specular
     vec3 viewDir = normalize(vViewPos - vFragPos);
     vec3 reflectDir = reflect(-lightDir, norm);  
@@ -43,12 +44,12 @@ void main()
     //vec3 diffuse  = light.diffuse * (diff * material.diffuse);
     //vec3 specular = light.specular * (spec * material.specular);  
 
-    vec3 ambient  = 0.3 * material.ambient*amb;
-    vec3 diffuse  = 0.8 * material.diffuse*diff;
-    vec3 specular = 1.0 * material.specular*spec;
+    vec4 ambient  = 0.2 * texture(material.texture_diffuse1, vTexCoords) * amb;
+    vec4 diffuse  = 0.8 * texture(material.texture_diffuse1, vTexCoords) * diff;
+    vec4 specular = 1.0 * texture(material.texture_specular1, vTexCoords)*spec;
     
-    FragColor = vec4((ambient + diffuse + specular), 1.0) ;
+    FragColor = ambient + diffuse + specular;
     FragColor.a = 1.0;
 
-    FragColor = texture(material.texture_diffuse1, vTexCoords);
+    //FragColor = texture(material.texture_diffuse1, vTexCoords);
 }

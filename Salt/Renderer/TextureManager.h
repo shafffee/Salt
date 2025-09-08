@@ -12,45 +12,69 @@
 //CONSIDER THIS BEFORE MAKING AN UPGRADE 
 #define MAX_TEXTURE_NUMBER 16
 
+
+//texture type for shader
+enum TextureType{
+	DIFFUSE,
+	SPECULAR
+}
+
+//texture struct
+struct Texture{
+	unsigned bind_index = 0;
+	TextureType type = DIFFUSE;
+    std::string filepath = "";
+
+    int width = 0;
+    int height = 0;
+}
+
+
+/*
+Texture manager has 3 main functions:
+CleanTextures - unloads all textures (does not unload textures from gpu, but makes them available for rewrite)
+LoadTexture - loads one texture using its filepath
+*/
+
 class TextureManager {
 public:
+	Texture textures[MAX_TEXTURE_NUMBER];
 
 	TextureManager() {
+		//TODO: get MAX_TEXTURE_NUMBER from opengl api
 		glGenTextures(MAX_TEXTURE_NUMBER, bind_index);
-		for (unsigned i = 0;i < MAX_TEXTURE_NUMBER;i++) name[i] = "";
-		for (unsigned i = 0;i < MAX_TEXTURE_NUMBER;i++) filename[i] = "";
-		for (unsigned i = 0;i < MAX_TEXTURE_NUMBER;i++) is_loaded[i] = false;
-
-		//add _blank texture
-		name[0] = "_blank";
-		is_loaded[0] = true;
-		GLubyte blankTexData[] = { 255, 255, 255, 255 };
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA,
-			GL_UNSIGNED_BYTE, blankTexData);
 	}
 
-	//used to get size of loaded texture
-	void LoadTexture(const std::string& tex_name, const std::string& tex_filename, int* width, int* height) {
-		unsigned tex_index = MAX_TEXTURE_NUMBER + 1;
-		for (unsigned i = 0;i < MAX_TEXTURE_NUMBER;i++) {
-			if (name[i] == "") {
-				tex_index = i;
-				name[tex_index] = tex_name;
-				filename[tex_index] = tex_filename;
-				is_loaded[tex_index] = true;
+	void CleanTextures(){
+		for(int i = 0; i<MAX_TEXTURE_NUMBER;i++){
+			textures[i] = Texture();
+		}
+	}
+
+	//loads texture and binds it
+	Texture LoadTexture(const std::string& filepath, TextureType type) {
+		//if texture is already binded -> return  
+		unsigned bind_index = MAX_TEXTURE_NUMBER+1;
+		for(int i=0; i<MAX_TEXTURE_NUMBER; i++){
+			if(textures[i].filepath == filepath){
+				//Salt::log::debug("texture "+filepath+" has already been binded")
+				return;
+			}
+			if(textures[i].filepath == ""){
+				//found free spot
+				bind_index=i;
 				break;
 			}
-			if (name[i] == tex_name) {
-				//Salt::log::error("texture with name " + tex_name + " is already created");
-				return;
-			};
 		}
-		if (tex_index == MAX_TEXTURE_NUMBER + 1) {
-			//Salt::log::error("unable to add texture " + tex_name + " because max texture number is  reached");
+
+		if(bind_index>MAX_TEXTURE_NUMBER){
+			Salt::log::error("texture "+filepath+" can not be binded: no free spot")
 			return;
 		}
 
-		glBindTexture(GL_TEXTURE_2D, tex_index);
+
+		//LOADING TEXTURE
+		glBindTexture(GL_TEXTURE_2D, );
 		// set the texture wrapping/filtering options (on currently bound texture)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -61,9 +85,8 @@ public:
 
 		stbi_set_flip_vertically_on_load(true);
 		int nrChannels;
-		/*unsigned char* data = stbi_load("./Salt/res/textures/texture1.png", &width, &height,
-			&nrChannels, 0);*/
-		unsigned char* data = stbi_load(filename[tex_index].c_str(), width, height,
+		int width, height;
+		unsigned char* data = stbi_load(filepath, &width, &height,
 			&nrChannels, 0);
 		if (data)
 		{
@@ -73,39 +96,47 @@ public:
 		}
 		else
 		{
-			//std::cout << "Failed to load texture" << std::endl;
+			Salt::log::error("Failed to load texture: "+filepath)
 		}
 		stbi_image_free(data);
-	}
-	//just load
-	void LoadTexture(const std::string& tex_name, const std::string& tex_filename) {
-		int w, h;
-		LoadTexture(tex_name, tex_filename, &w, &h);
+
+		//WRITING DATA TO TEXTURE
+		Texture[bind_index].bind_index=free_spot;
+		Texture[bind_index].type=type;
+		Texture[bind_index].filepath=filepath;
+		Texture[bind_index].width=width;
+		Texture[bind_index].height=height;
+
+		return Texture[bind_index];
 	}
 
-	unsigned getTexBindIndex(std::string tex_name) {
-		for (unsigned i = 0;i < MAX_TEXTURE_NUMBER;i++) {
-			if (tex_name == name[i]) {
-				//Salt::log::error(name[i] + "\t" + std::to_string(i));
-				return i;
-			}
-		}
-		//Salt::log::error("unable to find texture" + tex_name);
-		return 0;
+	void passTexturesToShader(){
+		unsigned int diffuseCount = 0;
+    	unsigned int specularCount = 0;
+    	unsigned int totalCount = 0;
+
+    	for(unsigned int i = 0; i < MAX_TEXTURE_NUMBER; i++)
+    	{
+        	glActiveTexture(GL_TEXTURE0 + totalCount); // activate proper texture unit before binding
+        		
+       		if(textures[i].filepath!=""){
+	        	std::string name = "";
+   		    	if(textures[i].type==DIFFUSE){
+   		    		diffuseCount++;
+   		    		totalCount++;
+ 	        		name = "texture_diffuse"+std::to_string(diffuseCount);
+   		    	}
+        		else if(textures[i].type==SPECULAR){
+   		    		specularCount++;
+   		    		totalCount++;
+ 	        		name = "texture_specular"+std::to_string(specularCount);
+   		    	}
+	
+        		shader.setInt(("material." + name).c_str(), i);
+       			glBindTexture(GL_TEXTURE_2D, textures[i].bind_index);
+       		}
+    	}
+    	glActiveTexture(GL_TEXTURE0);
 	}
 
-	void bindTextures() {
-		for (unsigned i = 0;i < MAX_TEXTURE_NUMBER;i++) {
-			if (is_loaded[i]) {
-				//Salt::log::error(name[i] + "\t" + std::to_string(bind_index[i]));
-				glActiveTexture(GL_TEXTURE0 + i);
-				glBindTexture(GL_TEXTURE_2D, i);
-			}
-		}
-	}
-private:
-	unsigned bind_index[MAX_TEXTURE_NUMBER];
-	std::string name[MAX_TEXTURE_NUMBER];
-	std::string filename[MAX_TEXTURE_NUMBER];
-	bool is_loaded[MAX_TEXTURE_NUMBER];
 };
