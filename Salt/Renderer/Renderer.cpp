@@ -112,6 +112,8 @@ namespace salt {
 		//font_manager = new FontManager();
 		backpack = new Model("./Salt/res/models/backpack/backpack.obj");
 
+		Textures::Init();
+
 	}
 
 	void Renderer::Update() {

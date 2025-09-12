@@ -1,5 +1,5 @@
-add_library(Renderer Camera.h Material.h Renderer.h Renderer.cpp Renderer_params.h Color.h TextureManager.h
-	Mesh.h Mesh.cpp Model.h Model.cpp Texture.h
+add_library(Renderer Camera.h Material.h Renderer.h Renderer.cpp Renderer_params.h Color.h
+	Mesh.h Mesh.cpp Model.h Model.cpp Texture.h Texture.cpp
 	Essentials/Essentials.h Essentials/IndexBuffer.h Essentials/Shader.h Essentials/Vertex.h Essentials/VertexArray.h Essentials/VertexBuffer.h
 )
 
