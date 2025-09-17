@@ -11,6 +11,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+namespace salt{
+class Renderer;
+}
 
 class Model 
 {
@@ -18,9 +21,9 @@ class Model
         Model(char *path)
         {
             loadModel(path);
-        }
-        void Draw(salt::Shader &shader);	
+        }	
     private:
+        void Draw(salt::Shader &shader);
         // model data
         std::vector<Mesh> meshes;
         std::string directory;
@@ -31,4 +34,6 @@ class Model
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);
         std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, 
                                              std::string typeName);
+
+        friend class salt::Renderer;
 };

@@ -91,6 +91,12 @@ namespace salt {
 		_indices.push_back(_verticies.size() - 1);
 	}
 
+	void Renderer::drawModel(Model* model)
+	{
+		models.push_back(model);
+	}
+
+
 	void Renderer::Init()
 	{
 		
@@ -110,7 +116,7 @@ namespace salt {
 		//texture_manager = new TextureManager();
 		//batch = new Batch();
 		//font_manager = new FontManager();
-		backpack = new Model("./Salt/res/models/backpack/backpack.obj");
+		//backpack = new Model("./Salt/res/models/backpack/backpack.obj");
 
 		Textures::Init();
 
@@ -126,6 +132,13 @@ namespace salt {
 		if (salt::Input::IsKeyPressed(SALT_KEY_A))camera.ProcessKeyboard(LEFT, 1.0f / 60);
 		if (salt::Input::IsKeyPressed(SALT_KEY_S))camera.ProcessKeyboard(BACKWARD, 1.0f / 60);
 		if (salt::Input::IsKeyPressed(SALT_KEY_D))camera.ProcessKeyboard(RIGHT, 1.0f / 60);
+		//speedup (made not in the best way because it just increases delta time)
+		if(salt::Input::IsKeyPressed(SALT_KEY_LEFT_SHIFT)){
+			if (salt::Input::IsKeyPressed(SALT_KEY_W))camera.ProcessKeyboard(FORWARD, 1.0f/60*9);
+			if (salt::Input::IsKeyPressed(SALT_KEY_A))camera.ProcessKeyboard(LEFT, 1.0f / 60*9);
+			if (salt::Input::IsKeyPressed(SALT_KEY_S))camera.ProcessKeyboard(BACKWARD, 1.0f / 60*9);
+			if (salt::Input::IsKeyPressed(SALT_KEY_D))camera.ProcessKeyboard(RIGHT, 1.0f / 60*9);
+		}
 		camera.ProcessMouseMovement(-salt::Input::GetCapturedMouseMovementX(), salt::Input::GetCapturedMouseMovementY());
 		if (salt::Input::IsKeyPressed(SALT_KEY_ESCAPE))salt::Input::UncaptureMouse();
 		if (salt::Input::IsMouseButtonPressed(SALT_MOUSE_BUTTON_1))salt::Input::CaptureMouse();
@@ -185,8 +198,10 @@ namespace salt {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
-		backpack->Draw(default_shader);
-
+		for(int i=0; i<models.size(); i++){
+			models[i]->Draw(default_shader);
+		}
+		models.clear();
 
 		glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
 

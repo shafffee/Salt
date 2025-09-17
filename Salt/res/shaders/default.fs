@@ -50,6 +50,7 @@ void main()
     
     FragColor = ambient + diffuse + specular;
     FragColor.a = 1.0;
+    FragColor.b = 1.0;
 
-    //FragColor = texture(material.texture_diffuse1, vTexCoords);
+    FragColor = texture(material.texture_diffuse1, vTexCoords);
 }

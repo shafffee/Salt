@@ -7,6 +7,8 @@ void cube();
 
 class MyApp : public salt::Application {
 
+  Model* backpack;
+
 	void onInit() override {
 		setFPS(60);
 		salt::Renderer::setVideomode(640, 640, false); //make it later
@@ -20,8 +22,12 @@ class MyApp : public salt::Application {
     //cube();
     colored_cube(3, 2, 1, 0.1, 0.3, 0.7, 1);
 
+    backpack = new Model("./Salt/res/models/container/Container.obj");
+    //backpack = new Model("./Salt/res/models/backpack/backpack.obj");
+
 	}
 	void onUpdate() override{
+    salt::Renderer::drawModel(backpack);
 	}
 	void onExit() override {
 	}

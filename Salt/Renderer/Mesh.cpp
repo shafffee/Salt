@@ -38,16 +38,11 @@ void Mesh::setupMesh()
     glBindVertexArray(0);
 }  
 
+
 void Mesh::Draw(salt::Shader &shader) 
 {
-	salt::Logging::Debug( "Mesh::Draw ");
-    Textures::UnbindAll();
-    for(unsigned int i = 0; i < textures.size(); i++)
-    {
-       textures[i].bind();
-    }
     shader.bind();
-    Textures::passTexturesToShader(shader);
+    Textures::passTexturesToShader(textures, shader);
 
     // draw mesh
     glBindVertexArray(VAO);

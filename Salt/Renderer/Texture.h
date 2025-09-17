@@ -10,7 +10,7 @@
 
 //Max textures are also tied with a fragment shader uniform(assigned in Batch.draw()) and a  fragment shader itself
 //CONSIDER THIS BEFORE MAKING AN UPGRADE 
-#define MAX_TEXTURE_NUMBER 16
+#define MAX_TEXTURE_NUMBER 8
 
 //texture type for shader
 enum TextureType{
@@ -19,95 +19,81 @@ enum TextureType{
 };
 
 
+/*
 //texture struct
 class Texture{
 private:
 	//those two vars are used in Textures and should not be used anywhere else
-	bool is_bound = false;
-	unsigned bind_index = 0;
-
-	TextureType type = DIFFUSE;
     std::string filepath = "";
-
-    int width = 0;
-    int height = 0;
-	friend class Textures;
-
-	Texture(){};
 public:
-	Texture(const std::string& filepath, TextureType type = DIFFUSE);
-	void bind();
-	void unbind();
+	Texture(const std::string& filepath);
 
-	int getWidth() {return width;};
-	int getHeight() {return height;};
-
-	//bool isBound() {return is_bound};
-	//unsigned getBindIndex(){}; //error if not bound
+	int getWidth() {};
+	int getHeight() {};
 
 	std::string getFilepath() {return filepath;};
 
-	TextureType getType() {return type;};
-	void setType(const TextureType& t) {type=t;};
-};
-
-/*
-class TextureInstance{
-private:
-	//those two vars are used in Textures and should not be used anywhere else
-	bool is_bound = false;
-	unsigned bind_index = 0;
-
-	TextureType type = DIFFUSE;
-    std::string filepath = "";
-
-    int width = 0;
-    int height = 0;
-	friend class Textures;
-
-	TextureInstance(){};
-public:
-	TextureInstance(const std::string& filepath, TextureType type = DIFFUSE);
-	void bind();
-	void unbind();
-
-	int getWidth() {return width;};
-	int getHeight() {return height;};
-
-	//bool isBound() {return is_bound};
-	//unsigned getBindIndex(){}; //error if not bound
-
-	std::string getFilepath() {return filepath;};
-
-	TextureType getType() {return type;};
-	void setType(const TextureType& t) {type=t;};
+	TextureType getType() {};
+	void setType(const TextureType& t) {};
 };
 */
 
+struct Texture{
+	std::string filepath = "";
+	TextureType type = DIFFUSE;
+};
+
+/*
+Textures::UnbindAll();
+Textures::bind("background.png");
+Textures::passBoundTexturesToShader
+*/
+
+
 class Textures{
+
 public:
-
-	static void UnbindAll();
-	static void passTexturesToShader(salt::Shader &shader);
-
-
-	static void Init(){
-		//TODO: get MAX_TEXTURE_NUMBER from opengl api
-		unsigned bind_indices[MAX_TEXTURE_NUMBER];
-		glGenTextures(MAX_TEXTURE_NUMBER, bind_indices);
-		for(int i=0; i<MAX_TEXTURE_NUMBER; i++){
-			textures[i].bind_index=bind_indices[i];
-		}
-	}
+	static void passTexturesToShader(const std::vector<Texture>& textures, salt::Shader &shader);
+	static void Init();
 
 private:
-	inline static Texture textures[MAX_TEXTURE_NUMBER];
 
-	//loads texture and binds it
-	static void LoadAndBindTexture(Texture* texture);
-	
-	static void Unbind(Texture* texture);
+	static void bind(const Texture& texture);
+	static void bind(const std::string& filepath, TextureType type=DIFFUSE);
 
-	friend class Renderer;
-	friend class Texture;
+	static void UnbindAll();
+
+	static void passBoundTexturesToShader(salt::Shader &shader);
+
+	struct TextureInstance{
+
+		//set in Textures::bind
+		TextureType type = DIFFUSE;
+    	std::string filepath = "";
+
+    	//set in TextureInstance::loadFromFile
+    	int width = 0;
+    	int height = 0;
+    	int channels = 0;
+    	unsigned char* data = nullptr;
+
+    	void loadFromFile(const std::string& filepath);
+
+    	void bindToSlot(unsigned bind_index);
+
+	};
+
+	inline static std::vector<TextureInstance> texture_data;
+	inline static int bound_texture_indicies[MAX_TEXTURE_NUMBER]; //has -1 if no texture is bound to corresponding bind indes
+	inline static unsigned bind_indices[MAX_TEXTURE_NUMBER];
+
+
+
+	//returns index in texture_data vector or -1 if not found
+	static int find_texture_by_name(const std::string& filepath);
+
+	//returns index in bound_texture_indicies[i]that has -1 (no texture in it)  (or -1 if not found)
+	static int find_slot_to_bind();
+
+	static int find_texture_in_bound(int index);
 };

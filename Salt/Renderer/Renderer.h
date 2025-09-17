@@ -20,8 +20,7 @@ namespace salt {
 	{
 	private:
 
-		//REMOVE LATER
-		inline static Model* backpack;
+		inline static std::vector<Model*> models;
 
 		//currently material for all objects
 		inline static Material mat = Material(glm::vec3(0.5375,0.05,0.06625), 
@@ -47,6 +46,9 @@ namespace salt {
 
 		//adds polygon
 		static void drawPolygon( Vertex a, Vertex b, Vertex c );
+
+		//draw model
+		static void drawModel(Model* model);
 
 		//adds verticies that are combined into triangles using indices
 		//static void drawConvex();

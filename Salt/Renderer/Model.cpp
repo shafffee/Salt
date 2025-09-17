@@ -1,11 +1,11 @@
 #include "Model.h"
 
 void Model::Draw(salt::Shader &shader)
-{
-	salt::Logging::Debug( "Model::Draw "+std::to_string(meshes.size()));
-    
-    for(unsigned int i = 0; i < meshes.size(); i++)
+{   
+    for(unsigned int i = 0; i < meshes.size(); i++){
+        //salt::Logging::Error(std::to_string(i));
         meshes[i].Draw(shader);
+    }
 }
 
 void Model::loadModel(std::string path)
@@ -98,16 +98,26 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-	salt::Logging::Debug( "Model::loadMaterialTextures "+std::to_string(mat->GetTextureCount(type)));
+    salt::Logging::Debug(std::to_string(mat->GetTextureCount(type)));
     std::vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {
-        aiString path;
-        mat->GetTexture(type, i, &path);
-        Texture texture(path.C_Str());
+        aiString aipath;
+        mat->GetTexture(type, i, &aipath);
+        Texture texture;
+        /*
+        some models were broken and were giwing path like this:
+        [ERROR]         Failed to load texture: ./Salt/res/models/container/C:\Users\Jaroslav\Documents\TS_Models\Container\textures_container\Container_DiffuseMap.jpg
+        so i cut it
+        */
+        std::string path = aipath.C_Str();
+        if(path.find_last_of("/\\")!=std::string::npos){
+            path = path.substr(path.find_last_of('/\\')+1);
+        }
+        texture.filepath = directory+"/"+path;
         
-        if(typeName == "texture_diffuse") texture.setType(TextureType::DIFFUSE);
-        else if(typeName == "texture_specular") texture.setType(TextureType::SPECULAR);
+        if(typeName == "texture_diffuse") texture.type = TextureType::DIFFUSE;
+        else if(typeName == "texture_specular") texture.type =TextureType::SPECULAR;
 
         textures.push_back(texture);
     }
