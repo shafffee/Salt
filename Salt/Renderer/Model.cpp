@@ -98,7 +98,6 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-    salt::Logging::Debug(std::to_string(mat->GetTextureCount(type)));
     std::vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {

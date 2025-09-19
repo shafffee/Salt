@@ -12,12 +12,9 @@ struct Material {
     vec3 diffuse;
     vec3 specular;
     float shininess;
-
-    sampler2D texture_diffuse1;
-    sampler2D texture_diffuse2;
-    sampler2D texture_specular1;
-    sampler2D texture_specular2;
 }; 
+
+uniform uvec2   textures [8];
 
 uniform Material material;
 
@@ -52,5 +49,6 @@ void main()
     FragColor.a = 1.0;
     FragColor.b = 1.0;
 
-    FragColor = texture(material.texture_diffuse1, vTexCoords);
+    //FragColor = texture(material.texture_diffuse1, vTexCoords);
+    FragColor = texture(sampler2D ( textures [0] ), vTexCoords);
 }

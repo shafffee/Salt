@@ -80,6 +80,13 @@ namespace salt {
         {
           glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
         }
+        void setUint64Array(const std::string& name, int size, const GLuint64* values) const
+        {
+            GLint location = glGetUniformLocation(ID, name.c_str());
+            if (location != -1) {
+                glUniformHandleui64vARB(location, 8, values);
+            }
+        }
         void setMaterial(const Material& material) {
           setVec3("material.ambient", material.ambient);
           setVec3("material.diffuse", material.diffuse);

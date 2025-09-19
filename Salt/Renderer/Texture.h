@@ -8,9 +8,9 @@
 
 //will need a lot of changes
 
-//Max textures are also tied with a fragment shader uniform(assigned in Batch.draw()) and a  fragment shader itself
+//textures num is also defined in shader, you should set it there too
 //CONSIDER THIS BEFORE MAKING AN UPGRADE 
-#define MAX_TEXTURE_NUMBER 8
+#define TEXTURES_IN_SHADER 4
 
 //texture type for shader
 enum TextureType{
@@ -58,16 +58,8 @@ public:
 
 private:
 
-	static void bind(const Texture& texture);
-	static void bind(const std::string& filepath, TextureType type=DIFFUSE);
-
-	static void UnbindAll();
-
-	static void passBoundTexturesToShader(salt::Shader &shader);
-
 	struct TextureInstance{
 
-		//set in Textures::bind
 		TextureType type = DIFFUSE;
     	std::string filepath = "";
 
@@ -77,23 +69,19 @@ private:
     	int channels = 0;
     	unsigned char* data = nullptr;
 
+    	//handle for bindless texture
+    	GLuint64 handle = 0;
+
+
     	void loadFromFile(const std::string& filepath);
 
-    	void bindToSlot(unsigned bind_index);
+    	void loadToGPU();
+    	void unloadFromGPU();
 
 	};
 
 	inline static std::vector<TextureInstance> texture_data;
-	inline static int bound_texture_indicies[MAX_TEXTURE_NUMBER]; //has -1 if no texture is bound to corresponding bind indes
-	inline static unsigned bind_indices[MAX_TEXTURE_NUMBER];
-
-
 
 	//returns index in texture_data vector or -1 if not found
 	static int find_texture_by_name(const std::string& filepath);
-
-	//returns index in bound_texture_indicies[i]that has -1 (no texture in it)  (or -1 if not found)
-	static int find_slot_to_bind();
-
-	static int find_texture_in_bound(int index);
 };
