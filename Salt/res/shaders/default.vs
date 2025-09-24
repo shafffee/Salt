@@ -1,6 +1,6 @@
-#version 330 core
+#version 420 core
 
-#extension GL_ARB_bindless_texture: require
+#extension GL_ARB_bindless_texture : require
 
 // Matches your Vertex struct layout
 layout(location = 0) in vec3 aPosition;

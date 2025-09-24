@@ -10,7 +10,7 @@
 
 //textures num is also defined in shader, you should set it there too
 //CONSIDER THIS BEFORE MAKING AN UPGRADE 
-#define TEXTURES_IN_SHADER 4
+#define TEXTURES_IN_SHADER 8
 
 //texture type for shader
 enum TextureType{
@@ -71,11 +71,14 @@ private:
 
     	//handle for bindless texture
     	GLuint64 handle = 0;
+    	GLuint textureId = 0;
 
 
     	void loadFromFile(const std::string& filepath);
 
     	void loadToGPU();
+    	void Textures::TextureInstance::loadToGPU_Fallback();
+
     	void unloadFromGPU();
 
 	};

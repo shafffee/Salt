@@ -4,28 +4,24 @@
 
 
 void Textures::Init(){
-    //TODO: get MAX_TEXTURE_NUMBER from opengl api
-    /*
-    glGenTextures(MAX_TEXTURE_NUMBER, bind_indices);
-    UnbindAll();
-    for(int i=0; i<MAX_TEXTURE_NUMBER;i++){
-        glBindTexture(GL_TEXTURE_2D, bind_indices[i]);  
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-    */
 
     //if GL_ARB_bindless_texture is undefined -> regenerate glad
-    if ( !GL_ARB_bindless_texture ){
-       salt::Logging::Error("GL_ARB_bindless_texture is not supported");
+    if ( !GLAD_GL_ARB_bindless_texture ){
+       salt::Logging::Error("GL_ARB_bindless_texture is not supported: CRITICAL");
         return;
     }
-    if (!GL_ARB_direct_state_access){
-        salt::Logging::Error("GL_ARB_direct_state_access is not supported");
+
+    //needed for glTexStorage2D(); It is used in loadToGpu in no-fallback case.
+    if ( !GLAD_GL_ARB_texture_storage ){
+       salt::Logging::Warning("GL_ARB_texture_storage is not supported, using fallback");
         return;
     }
+
+    if (!GLAD_GL_ARB_direct_state_access){
+        salt::Logging::Warning("GL_ARB_direct_state_access is not supported, using fallback");
+        return;
+    }
+
 }
 
 
@@ -58,16 +54,23 @@ void Textures::passTexturesToShader(const std::vector<Texture>& textures, salt::
         if(texture_data[index].data==nullptr) texture_data[index].loadFromFile(texture_data[index].filepath);
         if(texture_data[index].handle==0) texture_data[index].loadToGPU();
 
-        //sending image to shader
-        //glUniformHandleui64ARB(shader, texture_data[index].handle);
         handles[i] = texture_data[index].handle;
-
-
+        //salt::Logging::Debug("Loaded "+texture_data[index].filepath+" "+std::to_string(texture_data[index].handle));
     }
 
-    //sending handles to shader
-    shader.setUint64Array("textures", TEXTURES_IN_SHADER, handles);
 
+    /*
+    salt::Logging::Debug("----------------------------");
+    for(int i=0;i<TEXTURES_IN_SHADER;i++){
+        salt::Logging::Debug(std::to_string(handles[i]));
+    }
+    salt::Logging::Debug("----------------------------");
+    */
+
+
+    //sending handles to shader
+    shader.setUVec2Array("textures", TEXTURES_IN_SHADER, handles);
+    //shader.setUint64Array("textures", 1, handles);
 };
 
 
@@ -91,7 +94,6 @@ int Textures::find_texture_by_name(const std::string& filepath){
 //------------------------------------------------------------
 
 void Textures::TextureInstance::loadFromFile(const std::string& filepath){
-
     if(data) stbi_image_free(data);
 
     stbi_set_flip_vertically_on_load(true);
@@ -105,6 +107,9 @@ void Textures::TextureInstance::loadFromFile(const std::string& filepath){
 };
 
 
+
+//this function uses GLAD_ARB_direct_state_access, but has fallbacks if needed
+//TODO: separate on two functions:fallback and standart
 void Textures::TextureInstance::loadToGPU(){
 
     if (!data){
@@ -112,11 +117,15 @@ void Textures::TextureInstance::loadToGPU(){
         return;
     }
 
-    //if handle is not create4d and texture is not loaded to gpu
+    if(!GLAD_GL_ARB_direct_state_access || !GLAD_GL_ARB_texture_storage){
+        loadToGPU_Fallback();
+        return;
+    }
+
+    //if handle is not created and texture is not loaded to gpu
     if(handle==0){
 
-        GLuint textureId;
-        glCreateTextures(GL_TEXTURE_2D, 1, &textureId); // requires GL_ARB_direct_state_access
+        glCreateTextures(GL_TEXTURE_2D, 1, &textureId);
 
         // Determine format based on channel count
         //there may be errors with sized format (it may not be 8)
@@ -134,8 +143,8 @@ void Textures::TextureInstance::loadToGPU(){
 
         glTextureStorage2D(textureId, 1, sizedInternalFormat,  width, height);
         glTextureSubImage2D(textureId, 0, 0, 0, width, height, baseInternalFormat, GL_UNSIGNED_BYTE, data);
- 
-        // Устанавливаем параметры текстуры
+
+        //texture_parameters
         glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -145,8 +154,61 @@ void Textures::TextureInstance::loadToGPU(){
 
         handle = glGetTextureHandleARB(textureId);
         glMakeTextureHandleResidentARB(handle);
+    
     }
 };
+
+
+void Textures::TextureInstance::loadToGPU_Fallback(){
+    
+    //if handle is not created and texture is not loaded to gpu
+    if(handle==0){
+
+        if (textureId == 0) {
+            glGenTextures(1, &textureId);
+        }
+
+        // Determine format based on channel count
+        //there may be errors with sized format (it may not be 8)
+        GLenum sizedInternalFormat = GL_RGB8;
+        GLenum baseInternalFormat = GL_RGB;
+        switch(channels) {
+            case 1: baseInternalFormat = GL_RED; sizedInternalFormat = GL_R8; break;
+            case 3: baseInternalFormat = GL_RGB; sizedInternalFormat = GL_RGB8; break;
+            case 4: baseInternalFormat = GL_RGBA; sizedInternalFormat = GL_RGBA8; break;
+            default:
+                salt::Logging::Error("Textures::TextureInstance::bindToSlot Unsupported texture format with " + 
+                    std::to_string(channels) + " channels in " + filepath);
+                return;
+        }
+
+
+
+        glBindTexture(GL_TEXTURE_2D, textureId);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, sizedInternalFormat, width, height, 0, baseInternalFormat, GL_UNSIGNED_BYTE, data);
+
+        //texture_parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        handle = glGetTextureHandleARB(textureId);
+        glMakeTextureHandleResidentARB(handle);
+
+        // Unbind texture after configuration
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        GLenum err;
+        while ((err = glGetError()) != GL_NO_ERROR) {
+            salt::Logging::Error("OpenGL error in texture loading: " + std::to_string(err));
+        }
+    
+    }
+}
 
 void Textures::TextureInstance::unloadFromGPU(){
     //NOT IMPLEMENTED YET

@@ -1,5 +1,8 @@
 #version 330 core
 
+#extension GL_ARB_bindless_texture : require
+
+
 in vec3 vNormal;
 in vec2 vTexCoords;
 in vec3 vFragPos;
@@ -14,7 +17,9 @@ struct Material {
     float shininess;
 }; 
 
-uniform uvec2   textures [8];
+uniform uvec2 textures[8];
+//uniform uvec2 diffuse;
+//uniform uvec2 specular;
 
 uniform Material material;
 
@@ -41,14 +46,19 @@ void main()
     //vec3 diffuse  = light.diffuse * (diff * material.diffuse);
     //vec3 specular = light.specular * (spec * material.specular);  
 
-    vec4 ambient  = 0.2 * texture(material.texture_diffuse1, vTexCoords) * amb;
-    vec4 diffuse  = 0.8 * texture(material.texture_diffuse1, vTexCoords) * diff;
-    vec4 specular = 1.0 * texture(material.texture_specular1, vTexCoords)*spec;
+    //vec4 ambient  = 0.2 * texture(material.texture_diffuse1, vTexCoords) * amb;
+    //vec4 diffuse  = 0.8 * texture(material.texture_diffuse1, vTexCoords) * diff;
+    //vec4 specular = 1.0 * texture(material.texture_specular1, vTexCoords)*spec;
     
-    FragColor = ambient + diffuse + specular;
+    //FragColor = ambient + diffuse + specular;
     FragColor.a = 1.0;
     FragColor.b = 1.0;
 
+    // Проверяем, что handle не нулевой
+    //if (diffuseTexture != 0u)
+
     //FragColor = texture(material.texture_diffuse1, vTexCoords);
-    FragColor = texture(sampler2D ( textures [0] ), vTexCoords);
+    //FragColor = texture(sampler2D(diffuse), vTexCoords);
+    FragColor = texture(sampler2D(textures[0]), vTexCoords);
+
 }
