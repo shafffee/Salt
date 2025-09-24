@@ -43,7 +43,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 {
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    Material material;
 
     for(unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -83,20 +83,20 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
     // process material
     if(mesh->mMaterialIndex >= 0)
     {
-        aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, 
-                                        aiTextureType_DIFFUSE, "texture_diffuse");
-        textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-        std::vector<Texture> specularMaps = loadMaterialTextures(material, 
-                                        aiTextureType_SPECULAR, "texture_specular");
-        textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+        aiMaterial *aimaterial = scene->mMaterials[mesh->mMaterialIndex];
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(aimaterial, 
+                                        aiTextureType_DIFFUSE);
+
+        //the texture in material is diffuse texture now
+        if(diffuseMaps.size()>0) material.texture = diffuseMaps[0];
+
     }
 
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices, indices, material);
 }  
 
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type)
 {
     std::vector<Texture> textures;
     for(unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -114,9 +114,6 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
             path = path.substr(path.find_last_of('/\\')+1);
         }
         texture.filepath = directory+"/"+path;
-        
-        if(typeName == "texture_diffuse") texture.type = TextureType::DIFFUSE;
-        else if(typeName == "texture_specular") texture.type =TextureType::SPECULAR;
 
         textures.push_back(texture);
     }

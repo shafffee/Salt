@@ -26,51 +26,25 @@ void Textures::Init(){
 
 
 
-void Textures::passTexturesToShader(const std::vector<Texture>& textures, salt::Shader &shader){
+void Textures::passTextureToShader(const Texture& texture, salt::Shader &shader, const std::string& field_name){
 
-    if(textures.size()>TEXTURES_IN_SHADER){
-        salt::Logging::Error("Textures::passTexturesToShader : too many textures. shader supports less handles");
-        return;
+    int index = find_texture_by_name(texture.filepath);
+    //if texture is loaded for the first time
+    if(index==-1){
+        TextureInstance ti;
+        ti.filepath = texture.filepath;
+        //ti.type = texture.type;
+        texture_data.push_back(ti);
+        index = texture_data.size()-1;
     }
 
-    GLuint64 handles[TEXTURES_IN_SHADER] = {0};
+    //reading image and sending it to gpu
+    if(texture_data[index].data==nullptr) texture_data[index].loadFromFile(texture_data[index].filepath);
+    if(texture_data[index].handle==0) texture_data[index].loadToGPU();
+    //salt::Logging::Debug("Loaded "+texture_data[index].filepath+" "+std::to_string(texture_data[index].handle));
 
-
-    for(unsigned int i = 0; i < textures.size(); i++)
-    {
-
-        int index = find_texture_by_name(textures[i].filepath);
-
-        //if texture is loaded for the first time
-        if(index==-1){
-            TextureInstance ti;
-            ti.filepath = textures[i].filepath;
-            ti.type = textures[i].type;
-            texture_data.push_back(ti);
-            index = texture_data.size()-1;
-        }
-
-        //reading image and sending it to gpu
-        if(texture_data[index].data==nullptr) texture_data[index].loadFromFile(texture_data[index].filepath);
-        if(texture_data[index].handle==0) texture_data[index].loadToGPU();
-
-        handles[i] = texture_data[index].handle;
-        //salt::Logging::Debug("Loaded "+texture_data[index].filepath+" "+std::to_string(texture_data[index].handle));
-    }
-
-
-    /*
-    salt::Logging::Debug("----------------------------");
-    for(int i=0;i<TEXTURES_IN_SHADER;i++){
-        salt::Logging::Debug(std::to_string(handles[i]));
-    }
-    salt::Logging::Debug("----------------------------");
-    */
-
-
-    //sending handles to shader
-    shader.setUVec2Array("textures", TEXTURES_IN_SHADER, handles);
-    //shader.setUint64Array("textures", 1, handles);
+    //sending handle to shader
+    shader.setUVec2(field_name, texture_data[index].handle);
 };
 
 

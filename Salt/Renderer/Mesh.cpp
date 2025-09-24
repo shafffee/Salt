@@ -1,11 +1,11 @@
 #include "Mesh.h"
 #include <glad/glad.h>
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material material)
 {
     this->vertices = vertices;
     this->indices = indices;
-    this->textures = textures;
+    this->material = material;
 
     setupMesh();
 }
@@ -42,7 +42,7 @@ void Mesh::setupMesh()
 void Mesh::Draw(salt::Shader &shader) 
 {
     shader.bind();
-    Textures::passTexturesToShader(textures, shader);
+    material.passToShader(shader);
 
     // draw mesh
     glBindVertexArray(VAO);

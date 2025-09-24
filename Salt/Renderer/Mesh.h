@@ -4,15 +4,16 @@
 #include "Vertex.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Material.h"
 
 class Mesh {
     public:
         // mesh data
         std::vector<Vertex>       vertices;
         std::vector<unsigned int> indices;
-        std::vector<Texture>      textures;
+        Material material;
 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material material);
         void Draw(salt::Shader &shader);
     private:
         //  render data

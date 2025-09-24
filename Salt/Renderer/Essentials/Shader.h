@@ -8,7 +8,6 @@
 #include <glad/glad.h>
 #include <Logging.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <Material.h>
 
 namespace salt {
     class Shader
@@ -80,7 +79,10 @@ namespace salt {
         {
           glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
         }
-
+        void setVec4(const std::string& name, const glm::vec4& value) const
+        {
+          glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
+        }
 
         //TEXTURES ARE SENT AS UVEC2
         void setUVec2(const std::string& name, const GLuint64& value) const
@@ -92,14 +94,6 @@ namespace salt {
             glUniform2uiv(glGetUniformLocation(ID, name.c_str()), size, (const GLuint *)values);
         }
 
-
-
-        void setMaterial(const Material& material) {
-          setVec3("material.ambient", material.ambient);
-          setVec3("material.diffuse", material.diffuse);
-          setVec3("material.specular", material.specular);
-          setFloat("material.shininess", material.shininess);
-        }
     private:
         // utility function for checking shader compilation/linking errors.
         // ------------------------------------------------------------------------

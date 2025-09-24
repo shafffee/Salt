@@ -22,13 +22,6 @@ namespace salt {
 
 		inline static std::vector<Model*> models;
 
-		//currently material for all objects
-		inline static Material mat = Material(glm::vec3(0.5375,0.05,0.06625), 
-																					glm::vec3(0.18275 ,0.17 ,0.22525), 
-																					glm::vec3(0.332741 ,0.328634 ,0.346435), 
-																					0.3
-																					);
-
 		inline static std::vector<Vertex> _verticies;
 		inline static std::vector<uint32_t> _indices;
 		//videomode

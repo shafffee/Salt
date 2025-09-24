@@ -8,59 +8,35 @@
 
 //will need a lot of changes
 
-//textures num is also defined in shader, you should set it there too
-//CONSIDER THIS BEFORE MAKING AN UPGRADE 
-#define TEXTURES_IN_SHADER 8
 
 //texture type for shader
+/*
 enum TextureType{
 	DIFFUSE,
 	SPECULAR
-};
-
-
-/*
-//texture struct
-class Texture{
-private:
-	//those two vars are used in Textures and should not be used anywhere else
-    std::string filepath = "";
-public:
-	Texture(const std::string& filepath);
-
-	int getWidth() {};
-	int getHeight() {};
-
-	std::string getFilepath() {return filepath;};
-
-	TextureType getType() {};
-	void setType(const TextureType& t) {};
 };
 */
 
 struct Texture{
 	std::string filepath = "";
-	TextureType type = DIFFUSE;
+	//TextureType type = DIFFUSE;
+
+	bool isNull(){
+		return filepath == "";
+	} 
 };
-
-/*
-Textures::UnbindAll();
-Textures::bind("background.png");
-Textures::passBoundTexturesToShader
-*/
-
 
 class Textures{
 
 public:
-	static void passTexturesToShader(const std::vector<Texture>& textures, salt::Shader &shader);
+	static void passTextureToShader(const Texture& texture, salt::Shader &shader, const std::string& field_name);
 	static void Init();
 
 private:
 
 	struct TextureInstance{
 
-		TextureType type = DIFFUSE;
+		//TextureType type = DIFFUSE;
     	std::string filepath = "";
 
     	//set in TextureInstance::loadFromFile

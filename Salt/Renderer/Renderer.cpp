@@ -179,8 +179,6 @@ namespace salt {
 		default_shader.setMat4("projection", projection);
 		default_shader.setVec3("viewPos", camera.Position);
 
-		default_shader.setMaterial(mat);
-
 		vbo.bind();
 		vbo.buffer(&_verticies[0], _verticies.size() * sizeof(Vertex));
 		ibo.bind();

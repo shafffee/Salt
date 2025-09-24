@@ -11,54 +11,19 @@ in vec3 vViewPos;
 out vec4 FragColor;
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float shininess;
+    vec4 color;             //tint
+    uvec2 texture_handle;
 }; 
-
-uniform uvec2 textures[8];
-//uniform uvec2 diffuse;
-//uniform uvec2 specular;
 
 uniform Material material;
 
 void main()
 {
 
-    vec4 lightColor = vec4(1, 1, 1, 1);
-    
-    vec3 lightPos = vec3(0.0, 0.0, 0.0);
-    vec3 norm = normalize(vNormal);
-    vec3 lightDir = normalize(lightPos - vFragPos); 
-
-    //diffuse
-    float diff = max(dot(norm, lightDir), 0.0);
-    //ambient
-    vec4 amb = lightColor;
-    //specular
-    vec3 viewDir = normalize(vViewPos - vFragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess*128);
-
-    
-    //vec3 ambient  = light.ambient * material.ambient;
-    //vec3 diffuse  = light.diffuse * (diff * material.diffuse);
-    //vec3 specular = light.specular * (spec * material.specular);  
-
-    //vec4 ambient  = 0.2 * texture(material.texture_diffuse1, vTexCoords) * amb;
-    //vec4 diffuse  = 0.8 * texture(material.texture_diffuse1, vTexCoords) * diff;
-    //vec4 specular = 1.0 * texture(material.texture_specular1, vTexCoords)*spec;
-    
-    //FragColor = ambient + diffuse + specular;
-    FragColor.a = 1.0;
-    FragColor.b = 1.0;
-
-    // Проверяем, что handle не нулевой
-    //if (diffuseTexture != 0u)
-
-    //FragColor = texture(material.texture_diffuse1, vTexCoords);
-    //FragColor = texture(sampler2D(diffuse), vTexCoords);
-    FragColor = texture(sampler2D(textures[0]), vTexCoords);
+    // Прoверяем, что handle не нулевой
+    if (material.texture_handle != 0u) 
+        FragColor = material.color*texture(sampler2D(material.texture_handle), vTexCoords);
+    else
+        FragColor = material.color;
 
 }
