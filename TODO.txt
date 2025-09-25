@@ -1,2 +1,8 @@
-1) make Textures work
-2) in ECS make inner classes for entityInstance ets, leave only Entity, component and system free to use
+Cameras::
+camera.setAsMain
+
+fonts
+
+windows
+
+sprite

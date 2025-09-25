@@ -8,6 +8,7 @@
 #include "VertexArray.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Sprite.h"
 
 //#include "./TextureManager/TextureManager.h"
 //#include "./Batch/Batch.h"
@@ -22,26 +23,15 @@ namespace salt {
 
 		inline static std::vector<Model*> models;
 
-		inline static std::vector<Vertex> _verticies;
-		inline static std::vector<uint32_t> _indices;
-		//videomode
-		inline static int64_t _videomode_x;
-		inline static int64_t _videomode_y;
-		inline static bool _videomode_stretch;
-
 		//currently the same shader for all objects
 		inline static Shader default_shader;
 
 		inline static Camera camera;
 	public:
 
-		static void setVideomode(int64_t videomode_x, int64_t videomode_y, bool videomode_stretch);
-
-		//adds polygon
-		static void drawPolygon( Vertex a, Vertex b, Vertex c );
-
 		//draw model
-		static void drawModel(Model* model);
+		static void draw(Model* model);
+		static void draw(Sprite* sprite);
 
 		//adds verticies that are combined into triangles using indices
 		//static void drawConvex();

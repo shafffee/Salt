@@ -23,16 +23,19 @@ class Model
             loadModel(path);
         }	
     private:
+        Model(){};
+
         void Draw(salt::Shader &shader);
         // model data
         std::vector<Mesh> meshes;
         std::string directory;
-        std::vector<Texture> textures_loaded; 
 
+        //functions to load model from file
         void loadModel(std::string path);
         void processNode(aiNode *node, const aiScene *scene);
         Mesh processMesh(aiMesh *mesh, const aiScene *scene);
         std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type);
 
         friend class salt::Renderer;
+        friend class Sprite;
 };

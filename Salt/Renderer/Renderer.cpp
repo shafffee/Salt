@@ -74,26 +74,13 @@ namespace salt {
 
 namespace salt {
 
-	void Renderer::setVideomode(int64_t videomode_x, int64_t videomode_y, bool videomode_stretch)
-	{
-		_videomode_x = videomode_x;
-		_videomode_y = videomode_y;
-		_videomode_stretch = videomode_stretch;
-	}
-	void Renderer::drawPolygon(Vertex a, Vertex b, Vertex c)
-	{
-		_verticies.push_back(a);
-		_verticies.push_back(b);
-		_verticies.push_back(c);
-
-		_indices.push_back(_verticies.size() - 3);
-		_indices.push_back(_verticies.size() - 2);
-		_indices.push_back(_verticies.size() - 1);
-	}
-
-	void Renderer::drawModel(Model* model)
+	void Renderer::draw(Model* model)
 	{
 		models.push_back(model);
+	}
+	void Renderer::draw(Sprite* sprite)
+	{
+		models.push_back(sprite);
 	}
 
 
@@ -128,6 +115,8 @@ namespace salt {
 		int width, height;
 		glfwGetWindowSize(salt::Window::getGLFWwindow(), &width, &height);
 
+
+		//camera controls
 		if (salt::Input::IsKeyPressed(SALT_KEY_W))camera.ProcessKeyboard(FORWARD, 1.0f/60);
 		if (salt::Input::IsKeyPressed(SALT_KEY_A))camera.ProcessKeyboard(LEFT, 1.0f / 60);
 		if (salt::Input::IsKeyPressed(SALT_KEY_S))camera.ProcessKeyboard(BACKWARD, 1.0f / 60);
@@ -143,6 +132,9 @@ namespace salt {
 		if (salt::Input::IsKeyPressed(SALT_KEY_ESCAPE))salt::Input::UncaptureMouse();
 		if (salt::Input::IsMouseButtonPressed(SALT_MOUSE_BUTTON_1))salt::Input::CaptureMouse();
 
+
+
+		// MVP matrices
 		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		//model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
@@ -152,56 +144,23 @@ namespace salt {
 		glm::mat4 projection;
 		projection = glm::perspective(glm::radians(45.0f), 1.0f*width/height, 0.1f, 100.0f);
 
-		VertexArray vao = VertexArray();
-		VertexBuffer vbo = VertexBuffer();
-		IndexBuffer ibo = IndexBuffer();
-		
-
-		//texture_manager->bindTextures();
-		//
-		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT);
-		//
-		//batch->draw();
-		//batch->clear();
-		//glfwSwapBuffers(salt::Window::getGLFWwindow());
-		
+		//clear screen
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//DEBUG(GetOpenGLErrorString());
-
-		vao.bind();
-
+		//send matrices to shader
 		default_shader.bind();
 		default_shader.setMat4("model", model);
 		default_shader.setMat4("view", view);
 		default_shader.setMat4("projection", projection);
 		default_shader.setVec3("viewPos", camera.Position);
 
-		vbo.bind();
-		vbo.buffer(&_verticies[0], _verticies.size() * sizeof(Vertex));
-		ibo.bind();
-		ibo.buffer(&_indices[0], _indices.size() * sizeof(uint32_t));
 
-		//glm::vec3 Position;
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
-		glEnableVertexAttribArray(0);
-
-		//glm::vec3 Normal;
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-
-		//glm::vec2 TexCoords;
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(6 * sizeof(float)));
-		glEnableVertexAttribArray(2);
-
+		//draw all models
 		for(int i=0; i<models.size(); i++){
 			models[i]->Draw(default_shader);
 		}
 		models.clear();
-
-		glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(salt::Window::getGLFWwindow());
 

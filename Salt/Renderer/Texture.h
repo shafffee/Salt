@@ -21,6 +21,8 @@ struct Texture{
 	std::string filepath = "";
 	//TextureType type = DIFFUSE;
 
+	Texture(std::string filepath=""): filepath(filepath){};
+
 	bool isNull(){
 		return filepath == "";
 	} 
