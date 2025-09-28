@@ -26,12 +26,14 @@ namespace salt {
 		//currently the same shader for all objects
 		inline static Shader default_shader;
 
-		inline static Camera camera;
+		inline static Camera* main_camera = nullptr;
 	public:
 
 		//draw model
 		static void draw(Model* model);
 		static void draw(Sprite* sprite);
+
+		static void setCamera(Camera* camera);
 
 		//adds verticies that are combined into triangles using indices
 		//static void drawConvex();

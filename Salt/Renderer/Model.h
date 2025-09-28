@@ -18,6 +18,7 @@ class Renderer;
 class Model 
 {
     public:
+        glm::mat4 transformation = glm::mat4(1.0f);
         Model(char *path)
         {
             loadModel(path);

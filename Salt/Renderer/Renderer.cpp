@@ -83,6 +83,10 @@ namespace salt {
 		models.push_back(sprite);
 	}
 
+	void Renderer::setCamera(Camera* camera){
+		main_camera = camera;
+	};
+
 
 	void Renderer::Init()
 	{
@@ -111,38 +115,23 @@ namespace salt {
 
 	void Renderer::Update() {
 
+		if(!main_camera){
+			salt::Logging::Error("Main camera isn`t set (nullptr)");
+			return;
+		}
+
 		// Get window dimensions
 		int width, height;
 		glfwGetWindowSize(salt::Window::getGLFWwindow(), &width, &height);
 
-
-		//camera controls
-		if (salt::Input::IsKeyPressed(SALT_KEY_W))camera.ProcessKeyboard(FORWARD, 1.0f/60);
-		if (salt::Input::IsKeyPressed(SALT_KEY_A))camera.ProcessKeyboard(LEFT, 1.0f / 60);
-		if (salt::Input::IsKeyPressed(SALT_KEY_S))camera.ProcessKeyboard(BACKWARD, 1.0f / 60);
-		if (salt::Input::IsKeyPressed(SALT_KEY_D))camera.ProcessKeyboard(RIGHT, 1.0f / 60);
-		//speedup (made not in the best way because it just increases delta time)
-		if(salt::Input::IsKeyPressed(SALT_KEY_LEFT_SHIFT)){
-			if (salt::Input::IsKeyPressed(SALT_KEY_W))camera.ProcessKeyboard(FORWARD, 1.0f/60*9);
-			if (salt::Input::IsKeyPressed(SALT_KEY_A))camera.ProcessKeyboard(LEFT, 1.0f / 60*9);
-			if (salt::Input::IsKeyPressed(SALT_KEY_S))camera.ProcessKeyboard(BACKWARD, 1.0f / 60*9);
-			if (salt::Input::IsKeyPressed(SALT_KEY_D))camera.ProcessKeyboard(RIGHT, 1.0f / 60*9);
-		}
-		camera.ProcessMouseMovement(-salt::Input::GetCapturedMouseMovementX(), salt::Input::GetCapturedMouseMovementY());
-		if (salt::Input::IsKeyPressed(SALT_KEY_ESCAPE))salt::Input::UncaptureMouse();
-		if (salt::Input::IsMouseButtonPressed(SALT_MOUSE_BUTTON_1))salt::Input::CaptureMouse();
-
-
-
 		// MVP matrices
-		glm::mat4 model = glm::mat4(1.0f);
 		//model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 		//model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 view = main_camera->getViewMatrix();
 
 		glm::mat4 projection;
-		projection = glm::perspective(glm::radians(45.0f), 1.0f*width/height, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(main_camera->getFOV()), 1.0f*width/height, 0.1f, 100.0f);
 
 		//clear screen
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -150,14 +139,14 @@ namespace salt {
 
 		//send matrices to shader
 		default_shader.bind();
-		default_shader.setMat4("model", model);
 		default_shader.setMat4("view", view);
 		default_shader.setMat4("projection", projection);
-		default_shader.setVec3("viewPos", camera.Position);
+		default_shader.setVec3("viewPos", main_camera->getPosition());
 
 
 		//draw all models
 		for(int i=0; i<models.size(); i++){
+			default_shader.setMat4("model", models[i]->transformation); //sending model matrix
 			models[i]->Draw(default_shader);
 		}
 		models.clear();

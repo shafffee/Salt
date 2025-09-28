@@ -8,7 +8,7 @@ namespace salt{
 class Renderer;
 }
 
-class Sprite: private Model
+class Sprite: public Model
 {
     public:
         Sprite(char *texture_path)
