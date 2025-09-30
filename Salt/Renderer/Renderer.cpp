@@ -74,13 +74,13 @@ namespace salt {
 
 namespace salt {
 
-	void Renderer::draw(Model* model)
+	void Renderer::draw(Model* model, int layer)
 	{
-		models.push_back(model);
+		layers[layer].push_back(model);
 	}
-	void Renderer::draw(Sprite* sprite)
+	void Renderer::draw(Sprite* sprite, int layer)
 	{
-		models.push_back(sprite);
+		layers[layer].push_back(sprite);
 	}
 
 	void Renderer::setCamera(Camera* camera){
@@ -144,12 +144,16 @@ namespace salt {
 		default_shader.setVec3("viewPos", main_camera->getPosition());
 
 
-		//draw all models
-		for(int i=0; i<models.size(); i++){
-			default_shader.setMat4("model", models[i]->getTransformationMatrix()); //sending model matrix
-			models[i]->Draw(default_shader);
+		//draw all models from all layers
+		// layer 1 - {model1, model2, ...}
+		for(auto& layer: layers){
+			glClear(GL_DEPTH_BUFFER_BIT);
+			for(int i=0; i<layer.second.size(); i++){
+				default_shader.setMat4("model", layer.second[i]->getTransformationMatrix()); //sending model matrix
+				layer.second[i]->Draw(default_shader);
+			}
+			layer.second.clear();
 		}
-		models.clear();
 
 		glfwSwapBuffers(salt::Window::getGLFWwindow());
 

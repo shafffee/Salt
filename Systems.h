@@ -1,7 +1,6 @@
 #pragma once
 #include "Salt.h"
 
-
 /*
 void bulletFlight(salt::ECS::Entity e)
 {

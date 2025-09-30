@@ -33,7 +33,7 @@ class MyApp : public salt::Application {
 	void onUpdate() override{
     angle+=0.1;
     backpack->setRotation({angle/3,angle/2,angle});
-    salt::Renderer::draw(backpack);
+    salt::Renderer::draw(backpack, -1);
     //salt::Renderer::draw(test_sprite);
 
     //capture/uncapture mouse
