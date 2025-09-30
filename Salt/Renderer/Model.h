@@ -44,6 +44,8 @@ class Model
             return transformation;
         }
 
+        //no setTransformationMatrix because it will require recallc of pos, scale and rot and it may not be just these transforms
+
     private:
 
         glm::mat4 transformation = glm::mat4(1.0f); // this is updated on setPosition, setRotation, etc

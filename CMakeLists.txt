@@ -10,8 +10,6 @@ add_subdirectory(Salt/)
 
 add_executable(Sandbox
 	SandBox.cpp
-	Components.h
-	Systems.h
 )
 
 target_link_libraries(Sandbox PUBLIC Salt)

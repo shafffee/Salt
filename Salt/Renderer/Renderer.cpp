@@ -148,6 +148,7 @@ namespace salt {
 		// layer 1 - {model1, model2, ...}
 		for(auto& layer: layers){
 			glClear(GL_DEPTH_BUFFER_BIT);
+			//salt::Logging::Debug("Drawing "+ std::to_string(layer.second.size())+" on layer "+std::to_string(layer.first));
 			for(int i=0; i<layer.second.size(); i++){
 				default_shader.setMat4("model", layer.second[i]->getTransformationMatrix()); //sending model matrix
 				layer.second[i]->Draw(default_shader);
