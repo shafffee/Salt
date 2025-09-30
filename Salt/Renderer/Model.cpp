@@ -109,6 +109,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         [ERROR]         Failed to load texture: ./Salt/res/models/container/C:\Users\Jaroslav\Documents\TS_Models\Container\textures_container\Container_DiffuseMap.jpg
         so i cut it
         */
+        
         std::string path = aipath.C_Str();
         if(path.find_last_of("/\\")!=std::string::npos){
             path = path.substr(path.find_last_of('/\\')+1);

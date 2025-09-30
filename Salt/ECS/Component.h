@@ -106,6 +106,22 @@ namespace salt {
 				return bits;
 			}
 
+    		// Define operator| for Component-Component
+    		template <class U>
+    		friend std::bitset<COMPONENT_TYPES_MAX> operator|(const Component<T>& lhs, const Component<U>& rhs) {
+    		    return std::bitset<COMPONENT_TYPES_MAX>(lhs) | std::bitset<COMPONENT_TYPES_MAX>(rhs);
+    		}
+		
+    		// Define operator| for Component-bitset
+    		friend std::bitset<COMPONENT_TYPES_MAX> operator|(const Component<T>& lhs, const std::bitset<COMPONENT_TYPES_MAX>& rhs) {
+    		    return std::bitset<COMPONENT_TYPES_MAX>(lhs) | rhs;
+    		}
+		
+    		// Define operator| for bitset-Component
+    		friend std::bitset<COMPONENT_TYPES_MAX> operator|(const std::bitset<COMPONENT_TYPES_MAX>& lhs, const Component<T>& rhs) {
+    		    return lhs | std::bitset<COMPONENT_TYPES_MAX>(rhs);
+    		}
+
 			template <class U>
 			friend class ComponentInstance;
 			friend class  ComponentPack;

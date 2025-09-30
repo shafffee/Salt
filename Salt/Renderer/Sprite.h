@@ -46,7 +46,8 @@ class Sprite: public Model
 
             //adding mesh (rect with texture)
             Model::meshes.push_back(Mesh(vertices, indices, mat));
-        }	
+        }
+
     private:
         void Draw(salt::Shader &shader);
 

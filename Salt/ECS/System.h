@@ -83,6 +83,21 @@ namespace salt {
 			// Implicit conversion to std::bitset
 			operator std::bitset<SYSTEMS_MAX>() const;
 
+			// Define operator| for System-System
+    		friend std::bitset<SYSTEMS_MAX> operator|(const System& lhs, const System& rhs) {
+    		    return std::bitset<SYSTEMS_MAX>(lhs) | std::bitset<SYSTEMS_MAX>(rhs);
+    		}
+		
+    		// Define operator| for System-bitset
+    		friend std::bitset<SYSTEMS_MAX> operator|(const System& lhs, const std::bitset<SYSTEMS_MAX>& rhs) {
+    		    return std::bitset<SYSTEMS_MAX>(lhs) | rhs;
+    		}
+		
+    		// Define operator| for bitset-System
+    		friend std::bitset<SYSTEMS_MAX> operator|(const std::bitset<SYSTEMS_MAX>& lhs, const System& rhs) {
+    		    return lhs | std::bitset<SYSTEMS_MAX>(rhs);
+    		}
+
 
 			friend class SystemInctance;
 			friend class SystemPack;

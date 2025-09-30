@@ -1,9 +1,13 @@
 #include "Salt.h"
+#include "Components.h"
+#include "Systems.h"
+#include "Player.h"
 
 class MyApp : public salt::Application {
 
-  //Model* backpack;
-  Sprite* test_sprite;
+  Model* backpack;
+  float angle = 0.0f;
+  //Sprite* test_sprite;
   Camera* camera;
 
 	void onInit() override {
@@ -13,16 +17,24 @@ class MyApp : public salt::Application {
 
     //backpack = new Model("./Salt/res/models/test_model.obj");
     //backpack = new Model("./Salt/res/models/backpack/backpack.obj");
-    test_sprite = new Sprite("./Salt/res/textures/shrek.jpeg");
+    //backpack = new Model("./res/earth/Earth.fbx");
+    backpack = new Model("./res/low-poly-planet-earth/Planet.fbx");
+    backpack->setPosition({0,0,-2});
+    //test_sprite = new Sprite("./Salt/res/textures/shrek.jpeg");
     camera = new Camera();
     salt::Renderer::setCamera(camera);
-    test_sprite->transformation = glm::translate(test_sprite->transformation, glm::vec3(0.0f, 0.0f, -1.0f));
-    test_sprite->transformation = glm::scale(test_sprite->transformation, glm::vec3(1.0f, 1.0f, 1.0f));
+    //test_sprite->setPosition({0,0,-1});
+
+
+    salt::ECS::Entity player = createPlayerEntity();
+
 
 	}
 	void onUpdate() override{
-    //salt::Renderer::drawModel(backpack);
-    salt::Renderer::draw(test_sprite);
+    angle+=0.1;
+    backpack->setRotation({angle/3,angle/2,angle});
+    salt::Renderer::draw(backpack);
+    //salt::Renderer::draw(test_sprite);
 
     //capture/uncapture mouse
     if (salt::Input::IsKeyPressed(SALT_KEY_ESCAPE))salt::Input::UncaptureMouse();

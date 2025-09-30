@@ -146,7 +146,7 @@ namespace salt {
 
 		//draw all models
 		for(int i=0; i<models.size(); i++){
-			default_shader.setMat4("model", models[i]->transformation); //sending model matrix
+			default_shader.setMat4("model", models[i]->getTransformationMatrix()); //sending model matrix
 			models[i]->Draw(default_shader);
 		}
 		models.clear();

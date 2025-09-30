@@ -1,5 +1,5 @@
 #pragma once
-#include "ECS.h"
+#include "Salt.h"
 
 
 /*
@@ -14,30 +14,34 @@ void bulletFlight(salt::ECS::Entity e)
 }
 
 inline static salt::ECS::System BULLET(&bulletFlight, POSITION);
+*/
 
-void char2Dcontrols(salt::ECS::Entity e)
+void sprite_sys(salt::ECS::Entity e)
 {
+    e.component<sprite_comp>(SPRITE_COMP)->sprite->setPosition({
+        e.component<sprite_comp>(SPRITE_COMP)->x,
+        e.component<sprite_comp>(SPRITE_COMP)->y,
+        -1
+    });
+    e.component<sprite_comp>(SPRITE_COMP)->sprite->setScale({
+        e.component<sprite_comp>(SPRITE_COMP)->width,
+        e.component<sprite_comp>(SPRITE_COMP)->height,
+        -1
+    });
 
-	int speed = 3;
-	if (salt::Input::IsKeyPressed(SALT_KEY_A)) e.component<position_comp>(POSITION)->x -= salt::pix_x(speed);
-	if (salt::Input::IsKeyPressed(SALT_KEY_D)) e.component<position_comp>(POSITION)->x += salt::pix_x(speed);
-	if (salt::Input::IsKeyPressed(SALT_KEY_W)) e.component<position_comp>(POSITION)->y -= salt::pix_y(speed);
-	if (salt::Input::IsKeyPressed(SALT_KEY_S)) e.component<position_comp>(POSITION)->y += salt::pix_y(speed);
-
-	if (salt::Input::IsKeyPressed(SALT_KEY_SPACE)) {
-
-		salt::ECS::Entity bullet1(POSITION, BULLET);
-		bullet1.component<position_comp>(POSITION)->x = e.component<position_comp>(POSITION)->x+ salt::pix_x(10);
-		bullet1.component<position_comp>(POSITION)->y = e.component<position_comp>(POSITION)->y+ salt::pix_y(40);
-
-		salt::ECS::Entity bullet2(POSITION, BULLET);
-		bullet2.component<position_comp>(POSITION)->x = e.component<position_comp>(POSITION)->x+ salt::pix_x(90);
-		bullet2.component<position_comp>(POSITION)->y = e.component<position_comp>(POSITION)->y + salt::pix_y(40);
-	}
-
-	salt::Renderer::drawSprite(e.component<position_comp>(POSITION)->x, e.component<position_comp>(POSITION)->y, salt::pix_x(100), salt::pix_y(100), "jet", "#FFFFFF");
+	salt::Renderer::draw(e.component<sprite_comp>(SPRITE_COMP)->sprite);
 }
 
-inline static salt::ECS::System CHAR_CONTROLS(&char2Dcontrols, POSITION);
+inline static salt::ECS::System SPRITE_SYS(&sprite_sys, SPRITE_COMP);
 
-*/
+
+void char2Dcontrols_sys(salt::ECS::Entity e)
+{
+    float speed = e.component<char2Dcontrols_comp>(CHAR2DCONTROLS_COMP)->speed;
+    if (salt::Input::IsKeyPressed(SALT_KEY_A)) e.component<char2Dcontrols_comp>(CHAR2DCONTROLS_COMP)->x -= speed;
+    if (salt::Input::IsKeyPressed(SALT_KEY_D)) e.component<char2Dcontrols_comp>(CHAR2DCONTROLS_COMP)->x += speed;
+    if (salt::Input::IsKeyPressed(SALT_KEY_W)) e.component<char2Dcontrols_comp>(CHAR2DCONTROLS_COMP)->y += speed;
+    if (salt::Input::IsKeyPressed(SALT_KEY_S)) e.component<char2Dcontrols_comp>(CHAR2DCONTROLS_COMP)->y -= speed;
+}
+
+inline static salt::ECS::System CHAR2DCONTROLS_SYS(&char2Dcontrols_sys, CHAR2DCONTROLS_COMP);
