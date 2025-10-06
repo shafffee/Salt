@@ -29,5 +29,5 @@ class MyApp : public salt::Application {
 };
 
 salt::Application* CreateApplication(){
-	return new MyApp();
+	return new MyApp(); 
 };

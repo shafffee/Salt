@@ -28,42 +28,20 @@ void Textures::Init(){
 
 void Textures::passTextureToShader(const Texture& texture, salt::Shader &shader, const std::string& field_name){
 
-    int index = find_texture_by_name(texture.filepath);
-    //if texture is loaded for the first time
-    if(index==-1){
-        TextureInstance ti;
-        ti.filepath = texture.filepath;
-        //ti.type = texture.type;
-        texture_data.push_back(ti);
-        index = texture_data.size()-1;
+    if(texture.isNull()){
+        salt::Logging::Error("Trying to pass null texture to shader");
+        return;
     }
 
-    //reading image and sending it to gpu
-    if(texture_data[index].data==nullptr) texture_data[index].loadFromFile(texture_data[index].filepath);
-    if(texture_data[index].handle==0) texture_data[index].loadToGPU();
-    //salt::Logging::Debug("Loaded "+texture_data[index].filepath+" "+std::to_string(texture_data[index].handle));
+    if(!id_instance_map.count(texture.id)){
+        salt::Logging::Error("Trying to pass texture with invalid id to shader");
+        return;
+    }
 
     //sending handle to shader
-    shader.setUVec2(field_name, texture_data[index].handle);
+    shader.setUVec2(field_name, id_instance_map[texture.id].handle);
 };
 
-
-//----------------------------------------------------------
-
-
-//returns index in texture_data vector or -1 if not found
-int Textures::find_texture_by_name(const std::string& filepath){
-    int result = -1;
-
-    for(int i=0; i<texture_data.size();i++){
-        if(texture_data[i].filepath==filepath){
-            result = i;
-            break;
-        }
-    }
-
-    return result;
-}
 
 //------------------------------------------------------------
 
@@ -80,6 +58,76 @@ void Textures::TextureInstance::loadFromFile(const std::string& filepath){
     }
 };
 
+void Textures::TextureInstance::loadFromData(const unsigned char*& data, int width, int height, int channels){
+    this->width = width;
+    this->height=height;
+    this->channels=channels;
+
+    size_t size = width * height * channels;
+    this->data = new unsigned char[size];
+    std::copy(data, data + size, this->data);
+};
+
+
+
+//loads texture from file, loads it to gpu and returns id
+uint64_t Textures::TextureFromFile(const std::string& filepath){
+        //calculating name for texture
+        std::string name = TEXTURE_FROM_FILE_TAG+filepath;
+
+        //if file is already loaded
+        if(name_id_map.count(name)){
+            return name_id_map[name];
+        }
+        //else
+
+        textures_loaded+=1;
+        uint64_t id = textures_loaded;
+
+        TextureInstance ti;
+        ti.tag = TEXTURE_FROM_FILE_TAG;
+        ti.filepath = filepath;
+        ti.loadFromFile(filepath);
+        ti.loadToGPU();
+        if(ti.data && CLEAR_DATA_AFTER_LOADING_TO_GPU) stbi_image_free(ti.data);
+        //ti.type = texture.type;
+
+        name_id_map.insert({name, id});
+        id_instance_map.insert({id, ti});
+
+        return id;
+};
+
+uint64_t Textures::TextureFromData(const unsigned char*& data, int width, int height, int channels, const std::string& label){
+        //calculating name for texture
+        std::string name = TEXTURE_FROM_DATA_TAG+label;
+
+        //if texture with the same label is already loaded
+        if(name_id_map.count(name)){
+            return name_id_map[name];
+        }
+        //else
+
+        textures_loaded+=1;
+        uint64_t id = textures_loaded;
+
+        TextureInstance ti;
+        ti.tag = TEXTURE_FROM_DATA_TAG;
+        ti.label = label;
+        ti.loadFromData(data, width, height, channels);
+        ti.loadToGPU();
+
+        if(ti.data && CLEAR_DATA_AFTER_LOADING_TO_GPU){
+            delete[] data;
+            data = nullptr;
+        };
+
+
+        name_id_map.insert({name, id});
+        id_instance_map.insert({id, ti});
+
+        return id;
+};
 
 
 //this function uses GLAD_ARB_direct_state_access, but has fallbacks if needed

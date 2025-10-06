@@ -103,7 +103,6 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     {
         aiString aipath;
         mat->GetTexture(type, i, &aipath);
-        Texture texture;
         /*
         some models were broken and were giwing path like this:
         [ERROR]         Failed to load texture: ./Salt/res/models/container/C:\Users\Jaroslav\Documents\TS_Models\Container\textures_container\Container_DiffuseMap.jpg
@@ -114,9 +113,9 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         if(path.find_last_of("/\\")!=std::string::npos){
             path = path.substr(path.find_last_of('/\\')+1);
         }
-        texture.filepath = directory+"/"+path;
 
-        textures.push_back(texture);
+        
+        textures.push_back(Texture(directory+"/"+path));
     }
     return textures;
 }  

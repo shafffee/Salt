@@ -88,4 +88,5 @@ class Model
 
         friend class salt::Renderer;
         friend class Sprite;
+        friend class Text;
 };
