@@ -9,6 +9,8 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Sprite.h"
+#include "Font.h"
+#include "Text.h"
 #include <map>
 
 //#include "./TextureManager/TextureManager.h"
@@ -23,10 +25,21 @@ namespace salt {
 	private:
 
 		// layer 1 - {model1, model2, ...}
-		inline static std::map<int, std::vector<Model*>> layers;
+		/*
+		
+		layer1:
+			default_shader: model1, model2
+			text_shader: model1
+			...
+		layer2:
+			...
+
+		*/
+		inline static std::map<int, std::map<std::string,std::vector<Model*>> > layers;
 
 		//currently the same shader for all objects
 		inline static Shader default_shader;
+		inline static Shader text_shader;
 
 		inline static Camera* main_camera = nullptr;
 	public:
@@ -34,6 +47,7 @@ namespace salt {
 		//draw model
 		static void draw(Model* model, int layer=0);
 		static void draw(Sprite* sprite, int layer=0);
+		static void drawT(Text* text, int layer=0);
 
 		static void setCamera(Camera* camera);
 

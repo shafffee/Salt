@@ -76,12 +76,16 @@ namespace salt {
 
 	void Renderer::draw(Model* model, int layer)
 	{
-		layers[layer].push_back(model);
+		layers[layer]["default"].push_back(model);
 	}
 	void Renderer::draw(Sprite* sprite, int layer)
 	{
-		layers[layer].push_back(sprite);
+		layers[layer]["default"].push_back(sprite);
 	}
+	void Renderer::drawT(Text* text, int layer){
+		layers[layer]["text"].push_back(text);
+	}
+
 
 	void Renderer::setCamera(Camera* camera){
 		main_camera = camera;
@@ -101,6 +105,7 @@ namespace salt {
 		//Salt::log::debug("Max texture units: " + std::to_string(max_units));
 
 		default_shader = Shader(read_file("./Salt/res/shaders/default.vs"), read_file("./Salt/res/shaders/default.fs"));
+		text_shader = Shader(read_file("./Salt/res/shaders/text.vs"), read_file("./Salt/res/shaders/text.fs"));
 		//load_obj(&_verticies, &_indices, read_file("./Salt/res/models/test_model.obj"), glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f)) );
 		//salt::Utils::load_obj(&_verticies, &_indices, read_file("./Salt/res/models/backpack/backpack.obj"), glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, -10.0f)) );
 
@@ -137,23 +142,41 @@ namespace salt {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//send matrices to shader
-		default_shader.bind();
-		default_shader.setMat4("view", view);
-		default_shader.setMat4("projection", projection);
-		default_shader.setVec3("viewPos", main_camera->getPosition());
-
 
 		//draw all models from all layers
 		// layer 1 - {model1, model2, ...}
 		for(auto& layer: layers){
 			glClear(GL_DEPTH_BUFFER_BIT);
 			//salt::Logging::Debug("Drawing "+ std::to_string(layer.second.size())+" on layer "+std::to_string(layer.first));
-			for(int i=0; i<layer.second.size(); i++){
-				default_shader.setMat4("model", layer.second[i]->getTransformationMatrix()); //sending model matrix
-				layer.second[i]->Draw(default_shader);
+			
+
+			//send matrices to shader
+			default_shader.bind();
+			default_shader.setMat4("view", view);
+			default_shader.setMat4("projection", projection);
+			default_shader.setVec3("viewPos", main_camera->getPosition());
+			if(layer.second.count("default")){
+				for(int i=0; i<layer.second["default"].size(); i++){
+					default_shader.setMat4("model", layer.second["default"][i]->getTransformationMatrix()); //sending model matrix
+					layer.second["default"][i]->Draw(default_shader);
+				}
+				layer.second["default"].clear();
 			}
-			layer.second.clear();
+
+			//send matrices to shader
+			text_shader.bind();
+			text_shader.setMat4("view", view);
+			text_shader.setMat4("projection", projection);
+			text_shader.setVec3("viewPos", main_camera->getPosition());
+			if(layer.second.count("text")){
+				for(int i=0; i<layer.second["text"].size(); i++){
+					text_shader.setMat4("model", layer.second["text"][i]->getTransformationMatrix()); //sending model matrix
+					layer.second["text"][i]->Draw(text_shader);
+				}
+				layer.second["text"].clear();
+			}
+
+
 		}
 
 		glfwSwapBuffers(salt::Window::getGLFWwindow());

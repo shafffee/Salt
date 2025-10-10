@@ -3,9 +3,8 @@
 #include <string>
 #include <vector>
 #include "Model.h"
+#include "Font.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H 
 
 namespace salt{
 class Renderer;
@@ -14,44 +13,85 @@ class Renderer;
 class Text: public Model
 {
     public:
-        Text(char *texture_path)
+        Text()
         {
-            //creating rect
-            std::vector<Vertex> vertices;
-            vertices.push_back({
-                {0.0f, 0.0f, 0.0f},  //pos
-                {0.0f, 0.0f, 1.0f},  //normal
-                {0.0f, 0.0f}         //tex cords
-            });
-            vertices.push_back({
-                {0.0f, 1.0f, 0.0f},  //pos
-                {0.0f, 0.0f, 1.0f},  //normal
-                {0.0f, 1.0f}         //tex cords
-            });
-            vertices.push_back({
-                {1.0f, 1.0f, 0.0f},  //pos
-                {0.0f, 0.0f, 1.0f},  //normal
-                {1.0f, 1.0f}         //tex cords
-            });
-            vertices.push_back({
-                {1.0f, 0.0f, 0.0f},  //pos
-                {0.0f, 0.0f, 1.0f},  //normal
-                {1.0f, 0.0f}         //tex cords
-            });
+        }
 
-            std::vector<unsigned int> indices = {0,1,2,0,2,3};
-
-            //setting material
-            Material mat(
-                {1.0f,1.0f,1.0f,1.0f},  //white color
-                Texture(texture_path)   //texture
-            );
-
-            //adding mesh (rect with texture)
-            Model::meshes.push_back(Mesh(vertices, indices, mat));
+        void setFont(Font font){
+            this->font = font;
+        }
+        void setString(const std::string& str){
+            this->str = str;
+            regenerateModel();
         }
 
     private:
+        Font font;
+        std::string str;
+
+        void regenerateModel(){
+            //clean all
+            Model::meshes.clear();
+
+            float x=0;
+            float y=0;
+
+            // iterate through all characters
+            for (char c: str)
+            {
+                Character ch = font.getChar(c);
+
+                float xpos = x + ch.Bearing.x;
+                float ypos = y - (ch.Size.y - ch.Bearing.y);
+        
+                float w = ch.Size.x;
+                float h = ch.Size.y;
+
+                /*
+                salt::Logging::Debug(std::to_string(xpos));
+                salt::Logging::Debug(std::to_string(ypos));
+                salt::Logging::Debug(std::to_string(w));
+                salt::Logging::Debug(std::to_string(h));
+                salt::Logging::Debug("-------------------------");
+                */
+
+                //creating rect
+                std::vector<Vertex> vertices;
+                vertices.push_back({
+                    {xpos, ypos + h, 0.0f},  //pos
+                    {0.0f, 0.0f, 1.0f},  //normal
+                    {0.0f, 0.0f}         //tex cords
+                });
+                vertices.push_back({
+                    {xpos, ypos, 0.0f},  //pos
+                    {0.0f, 0.0f, 1.0f},  //normal
+                    {0.0f, 1.0f}         //tex cords
+                });
+                vertices.push_back({
+                    {xpos + w, ypos, 0.0f},  //pos
+                    {0.0f, 0.0f, 1.0f},  //normal
+                    {1.0f, 1.0f}         //tex cords
+                });
+                vertices.push_back({
+                    {xpos + w, ypos + h, 0.0f},  //pos
+                    {0.0f, 0.0f, 1.0f},  //normal
+                    {1.0f, 0.0f}         //tex cords
+                });
+
+                std::vector<unsigned int> indices = {0,1,2,0,2,3};
+
+                //setting material
+                Material mat(
+                    {1.0f,1.0f,1.0f,1.0f},  //white color
+                    ch.texture   //texture
+                );
+
+                //adding mesh (rect with texture)
+                Model::meshes.push_back(Mesh(vertices, indices, mat));
+                x += ch.Advance >> 6;
+            }
+        };
+
         void Draw(salt::Shader &shader);
 
         friend class salt::Renderer;

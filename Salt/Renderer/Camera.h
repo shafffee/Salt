@@ -43,7 +43,7 @@ public:
     return fov;
   }
 
-private:
+//private:
   // camera Attributes
   glm::vec3 Position;
   glm::vec3 Front;

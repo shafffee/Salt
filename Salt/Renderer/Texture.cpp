@@ -58,7 +58,16 @@ void Textures::TextureInstance::loadFromFile(const std::string& filepath){
     }
 };
 
-void Textures::TextureInstance::loadFromData(const unsigned char*& data, int width, int height, int channels){
+void Textures::TextureInstance::loadFromData(unsigned char* data, int width, int height, int channels){
+
+    if (!data || width <= 0 || height <= 0 || channels <= 0) {
+        salt::Logging::Error("Smth is wrong in the Textures::TextureInstance::loadFromData. Null argument.");
+        return;
+    }
+
+    // Delete existing data first to prevent leaks
+    delete[] this->data;
+
     this->width = width;
     this->height=height;
     this->channels=channels;
@@ -98,7 +107,7 @@ uint64_t Textures::TextureFromFile(const std::string& filepath){
         return id;
 };
 
-uint64_t Textures::TextureFromData(const unsigned char*& data, int width, int height, int channels, const std::string& label){
+uint64_t Textures::TextureFromData(unsigned char* data, int width, int height, int channels, const std::string& label){
         //calculating name for texture
         std::string name = TEXTURE_FROM_DATA_TAG+label;
 
@@ -117,10 +126,12 @@ uint64_t Textures::TextureFromData(const unsigned char*& data, int width, int he
         ti.loadFromData(data, width, height, channels);
         ti.loadToGPU();
 
+        
         if(ti.data && CLEAR_DATA_AFTER_LOADING_TO_GPU){
-            delete[] data;
-            data = nullptr;
+            delete[] ti.data;
+            ti.data = nullptr;
         };
+        
 
 
         name_id_map.insert({name, id});

@@ -55,7 +55,7 @@ private:
 
 
     	void loadFromFile(const std::string& filepath);
-    	void loadFromData(const unsigned char*& data, int width, int height, int channels);
+    	void loadFromData(unsigned char* data, int width, int height, int channels);
 
     	void loadToGPU();
     	void Textures::TextureInstance::loadToGPU_Fallback();
@@ -68,7 +68,7 @@ private:
 	static uint64_t TextureFromFile(const std::string& filepath);
 	//loads texture from file, loads it to gpu and returns id
 	//does not copy data into TextureInstance, does not clean it
-	static uint64_t TextureFromData(const unsigned char*& data, int width, int height, int channels,  const std::string& label = "");
+	static uint64_t TextureFromData(unsigned char* data, int width, int height, int channels,  const std::string& label = "");
 
 	friend class Texture;
 
@@ -92,7 +92,7 @@ public:
 		id = Textures::TextureFromFile(filepath);
 	};
 
-	Texture(const unsigned char*& data, int width, int height, int channels, const std::string& label){
+	Texture(unsigned char* data, int width, int height, int channels, const std::string& label){
 		id = Textures::TextureFromData(data, width, height, channels, label);
 	};
 

@@ -21,7 +21,10 @@ add_subdirectory(UCSL/)
 add_library(Salt Salt.h Salt.cpp)
 
 target_include_directories(Salt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
-										${CMAKE_CURRENT_SOURCE_DIR}/Vendor/assimp/include/) #assimp
+										${CMAKE_CURRENT_SOURCE_DIR}/Vendor/assimp/include/
+										${CMAKE_CURRENT_SOURCE_DIR}/Vendor/freetype-2.14.1/include)
+
+
 target_link_libraries(Salt PUBLIC
 	OpenGL::GL glfw glad glm::glm-header-only stb_image freetype 	#vendor
 	unit assimp zlib										#assimp

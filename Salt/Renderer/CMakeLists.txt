@@ -6,6 +6,7 @@ add_library(Renderer Camera.h Material.h Material.cpp Renderer.h Renderer.cpp Re
 target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Essentials)
 target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/assimp/include/)
+target_include_directories(Renderer PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/freetype-2.14.1/include/)
 
 
 target_link_libraries(Renderer PRIVATE Logging)
