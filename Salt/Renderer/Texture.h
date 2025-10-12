@@ -38,6 +38,8 @@ private:
 
 	struct TextureInstance{
 
+		bool filtering = false;
+
 		//TextureType type = DIFFUSE;
     	std::string tag = "";	//a unique tag for each texture. It is used to determine if it is already loaded
     	std::string filepath = "";
@@ -65,10 +67,10 @@ private:
 	};
 
 	//loads texture from file, loads it to gpu and returns id
-	static uint64_t TextureFromFile(const std::string& filepath);
+	static uint64_t TextureFromFile(const std::string& filepath,  bool filtering = false);
 	//loads texture from file, loads it to gpu and returns id
 	//does not copy data into TextureInstance, does not clean it
-	static uint64_t TextureFromData(unsigned char* data, int width, int height, int channels,  const std::string& label = "");
+	static uint64_t TextureFromData(unsigned char* data, int width, int height, int channels,  const std::string& label = "",  bool filtering = false);
 
 	friend class Texture;
 
@@ -88,12 +90,12 @@ public:
 		id = 0;
 	};
 
-	Texture(std::string filepath){
-		id = Textures::TextureFromFile(filepath);
+	Texture(std::string filepath, bool filtering = false){
+		id = Textures::TextureFromFile(filepath, filtering);
 	};
 
-	Texture(unsigned char* data, int width, int height, int channels, const std::string& label){
-		id = Textures::TextureFromData(data, width, height, channels, label);
+	Texture(unsigned char* data, int width, int height, int channels, const std::string& label, bool filtering = false){
+		id = Textures::TextureFromData(data, width, height, channels, label, filtering);
 	};
 
 	bool isNull() const{

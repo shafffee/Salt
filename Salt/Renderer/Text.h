@@ -19,13 +19,21 @@ class Text: public Model
 
         void setFont(Font font){
             this->font = font;
+            regenerateModel();
         }
         void setString(const std::string& str){
             this->str = str;
             regenerateModel();
         }
 
+        void setColor(const glm::vec4& color){
+            this->color = color;
+            regenerateModel();
+        }
+
     private:
+        glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f,1.0f);
+
         Font font;
         std::string str;
 
@@ -82,7 +90,7 @@ class Text: public Model
 
                 //setting material
                 Material mat(
-                    {1.0f,1.0f,1.0f,1.0f},  //white color
+                    color,  //white color
                     ch.texture   //texture
                 );
 

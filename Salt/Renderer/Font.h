@@ -82,7 +82,8 @@ private:
                             face->glyph->bitmap.width,
                             face->glyph->bitmap.rows,
                             1,
-                            tex_name);
+                            tex_name,
+                            true); //linear filtering
                 }else{ //for space just send an empty texture (or for any broken symbol)
                 }
 
@@ -155,7 +156,11 @@ struct Font{
 
     Font(){};
 
-    Font(std::string filepath, int width =0, int height = 48): width(width), height(height){
+    Font(std::string filepath, int height = 48): width(0), height(height){
+        id = Fonts::FontFromFile(filepath, width, height);
+    };
+
+    Font(std::string filepath, int width, int height): width(width), height(height){
         id = Fonts::FontFromFile(filepath, width, height);
     };
 

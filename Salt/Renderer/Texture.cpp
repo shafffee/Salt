@@ -80,7 +80,7 @@ void Textures::TextureInstance::loadFromData(unsigned char* data, int width, int
 
 
 //loads texture from file, loads it to gpu and returns id
-uint64_t Textures::TextureFromFile(const std::string& filepath){
+uint64_t Textures::TextureFromFile(const std::string& filepath,  bool filtering){
         //calculating name for texture
         std::string name = TEXTURE_FROM_FILE_TAG+filepath;
 
@@ -96,8 +96,9 @@ uint64_t Textures::TextureFromFile(const std::string& filepath){
         TextureInstance ti;
         ti.tag = TEXTURE_FROM_FILE_TAG;
         ti.filepath = filepath;
+        ti.filtering = filtering;
         ti.loadFromFile(filepath);
-        ti.loadToGPU();
+        ti.loadToGPU(); 
         if(ti.data && CLEAR_DATA_AFTER_LOADING_TO_GPU) stbi_image_free(ti.data);
         //ti.type = texture.type;
 
@@ -107,7 +108,7 @@ uint64_t Textures::TextureFromFile(const std::string& filepath){
         return id;
 };
 
-uint64_t Textures::TextureFromData(unsigned char* data, int width, int height, int channels, const std::string& label){
+uint64_t Textures::TextureFromData(unsigned char* data, int width, int height, int channels, const std::string& label,  bool filtering){
         //calculating name for texture
         std::string name = TEXTURE_FROM_DATA_TAG+label;
 
@@ -123,6 +124,7 @@ uint64_t Textures::TextureFromData(unsigned char* data, int width, int height, i
         TextureInstance ti;
         ti.tag = TEXTURE_FROM_DATA_TAG;
         ti.label = label;
+        ti.filtering = filtering;
         ti.loadFromData(data, width, height, channels);
         ti.loadToGPU();
 
@@ -178,8 +180,13 @@ void Textures::TextureInstance::loadToGPU(){
         glTextureSubImage2D(textureId, 0, 0, 0, width, height, baseInternalFormat, GL_UNSIGNED_BYTE, data);
 
         //texture_parameters
-        glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        if(filtering){
+            glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }else{
+            glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         
@@ -215,20 +222,20 @@ void Textures::TextureInstance::loadToGPU_Fallback(){
                 return;
         }
 
-
-
         glBindTexture(GL_TEXTURE_2D, textureId);
-
         glTexImage2D(GL_TEXTURE_2D, 0, sizedInternalFormat, width, height, 0, baseInternalFormat, GL_UNSIGNED_BYTE, data);
 
         //texture_parameters
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        if(filtering){
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }else{
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            
+
         glGenerateMipmap(GL_TEXTURE_2D);
 
         handle = glGetTextureHandleARB(textureId);

@@ -1,8 +1,3 @@
-Cameras::
-camera.setAsMain
+may be need to do a global static shader collection. like Shaders:: to use it in renderer
 
-fonts
-
-windows
-
-sprite
+add ability to do multiple windows?
