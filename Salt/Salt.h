@@ -13,5 +13,6 @@
 #include "Utils.h"
 #include "Renderer.h"
 #include "Input.h"
+#include "Console.h"
 
 #include "UCSL.h"

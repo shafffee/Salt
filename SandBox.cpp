@@ -38,6 +38,9 @@ void camera3D_controller(Camera* cam){
 
 }
 
+void foo(){
+  std::cout<<"HW"<<std::endl;
+}
 
 class MyApp : public salt::Application {
 
@@ -60,13 +63,18 @@ class MyApp : public salt::Application {
     salt::ECS::Entity player = createPlayerEntity();
     createPlanetEntity();
 
-    font = new Font("./Salt/res/fonts/verdanai.ttf", 128);
+    salt::Console::addCommand(&foo, "hw");
+    salt::Console::addCommand(&foo, "hw");
+    salt::Console::run("nc");
+    salt::Console::run("hw");
+
+    font = new Font("./res/verdanai.ttf", 128);
     text = new Text();
     text->setFont(*font);
-    text->setColor({1,0,1,1});
+    text->setColor({1,1,1,1});
     text->setString("Hello World!");
     text->setPosition({0,0,-1});
-    text->setScale({0.01,0.01, 1});
+    text->setScale({0.1,0.1, 1});
 
 	}
 	void onUpdate() override{

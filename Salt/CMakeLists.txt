@@ -17,6 +17,7 @@ add_subdirectory(Renderer/)
 add_subdirectory(Core/)
 add_subdirectory(Input/)
 add_subdirectory(UCSL/)
+add_subdirectory(Console/)
 
 add_library(Salt Salt.h Salt.cpp)
 
@@ -28,5 +29,5 @@ target_include_directories(Salt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 target_link_libraries(Salt PUBLIC
 	OpenGL::GL glfw glad glm::glm-header-only stb_image freetype 	#vendor
 	unit assimp zlib										#assimp
-	Logging ECS Utils Renderer Core Input UCSL					#my things
+	Logging ECS Utils Renderer Core Input UCSL Console					#my things
 )

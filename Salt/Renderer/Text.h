@@ -41,6 +41,10 @@ class Text: public Model
             //clean all
             Model::meshes.clear();
 
+
+            //used to make each letter 1x1 size (not exactly, but sizes are close)
+            float scale = 1.0f/font.height;
+
             float x=0;
             float y=0;
 
@@ -49,11 +53,12 @@ class Text: public Model
             {
                 Character ch = font.getChar(c);
 
-                float xpos = x + ch.Bearing.x;
-                float ypos = y - (ch.Size.y - ch.Bearing.y);
+                float xpos = (x + ch.Bearing.x)*scale;
+                float ypos = (y - (ch.Size.y - ch.Bearing.y))*scale;
         
-                float w = ch.Size.x;
-                float h = ch.Size.y;
+                float w = ch.Size.x*scale;
+                float h = ch.Size.y*scale;
+
 
                 /*
                 salt::Logging::Debug(std::to_string(xpos));
