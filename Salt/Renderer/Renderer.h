@@ -47,7 +47,7 @@ namespace salt {
 		//draw model
 		static void draw(Model* model, int layer=0);
 		static void draw(Sprite* sprite, int layer=0);
-		static void drawT(Text* text, int layer=0);
+		static void draw(Text* text, int layer=0);
 
 		static void setCamera(Camera* camera);
 

@@ -43,7 +43,6 @@ class Model
         glm::mat4 getTransformationMatrix(){
             return transformation;
         }
-
         //no setTransformationMatrix because it will require recallc of pos, scale and rot and it may not be just these transforms
 
     private:

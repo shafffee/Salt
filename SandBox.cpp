@@ -63,10 +63,13 @@ class MyApp : public salt::Application {
     salt::ECS::Entity player = createPlayerEntity();
     createPlanetEntity();
 
+    
     salt::Console::addCommand(&foo, "hw");
     salt::Console::addCommand(&foo, "hw");
     salt::Console::run("nc");
     salt::Console::run("hw");
+    salt::Console::print("test console");
+    
 
     font = new Font("./res/verdanai.ttf", 128);
     text = new Text();
@@ -79,7 +82,7 @@ class MyApp : public salt::Application {
 	}
 	void onUpdate() override{
 
-    salt::Renderer::drawT(text,10);
+    salt::Renderer::draw(text,10);
 
     //capture/uncapture mouse
     if (salt::Input::IsKeyPressed(SALT_KEY_ESCAPE))salt::Input::UncaptureMouse();

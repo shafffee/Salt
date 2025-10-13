@@ -17,6 +17,14 @@ class Text: public Model
         {
         }
 
+        Text(const std::string& str, Font font, const glm::vec4& color = {1,1,1,1})
+        {
+            this->str = str;
+            this->font = font;
+            this->color = color;
+            regenerateModel();
+        }
+
         void setFont(Font font){
             this->font = font;
             regenerateModel();

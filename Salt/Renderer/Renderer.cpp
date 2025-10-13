@@ -82,7 +82,7 @@ namespace salt {
 	{
 		layers[layer]["default"].push_back(sprite);
 	}
-	void Renderer::drawT(Text* text, int layer){
+	void Renderer::draw(Text* text, int layer){
 		layers[layer]["text"].push_back(text);
 	}
 

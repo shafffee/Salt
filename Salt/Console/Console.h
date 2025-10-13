@@ -4,6 +4,7 @@
 #include <bitset>
 #include <string>
 #include <iostream>
+#include "ConsoleEntity.h"
 
 namespace salt::Console {
 
@@ -26,6 +27,7 @@ namespace salt::Console {
 	}
 
 	void print(std::string str){
+		createConsoleMessage(str);
 		std::cout<<str<<std::endl;
 	}
 
