@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glm/glm.hpp>
 #include <stb_image.h>
 
@@ -24,7 +26,7 @@ public:
 inline static salt::ECS::Component<c_model> C_MODEL;
 
 // system to draw model with transformation applied ( requires C_MODEL and C_TRANSFORMATION ) 
-void s_draw(salt::ECS::Entity e)
+inline static void s_draw(salt::ECS::Entity e)
 {
 
     if(e.component<c_model>(C_MODEL)->model){

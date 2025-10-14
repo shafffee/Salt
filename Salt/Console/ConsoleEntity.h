@@ -1,3 +1,4 @@
+#pragma once
 #include "ECS.h"
 #include "UCSL.h"
 
@@ -15,7 +16,7 @@ public:
 };
 inline static salt::ECS::Component<c_message> C_MESSAGE;
 
-void s_message(salt::ECS::Entity e)
+inline static void s_message(salt::ECS::Entity e)
 {
      e.component<c_message>(C_MESSAGE)->ticks += 1;
      int ticks = e.component<c_message>(C_MESSAGE)->ticks;
@@ -32,7 +33,7 @@ inline static salt::ECS::System S_MESSAGE(&s_message, C_MESSAGE | C_MODEL);
 
 
 
-salt::ECS::Entity createConsoleMessage(const std::string& msg, const glm::vec3& color = {1,1,1}){
+inline static salt::ECS::Entity createConsoleMessage(const std::string& msg, const glm::vec3& color = {1,1,1}){
     salt::ECS::Entity message( 
                             C_MODEL  | C_TRANSFORMATION | C_MESSAGE, 
                             S_DRAW   | S_MESSAGE

@@ -1,34 +1,33 @@
 #pragma once
-#include <stdint.h>
-#include <map>
-#include <bitset>
+
 #include <string>
-#include <iostream>
-#include "ConsoleEntity.h"
+#include <map>
+#include <glm/glm.hpp>
+#include "Logging.h"
 
-namespace salt::Console {
+namespace salt {
 
-	std::map<std::string, void(*)()> name_command_map;
+	class Application;
 
-	void addCommand(void(*foo)(), std::string name){
-		if(name_command_map.count(name)){
-			std::cout<<"Command \""<<name<<"\" has already been registered"<<std::endl;
-			return;
-		}
-		name_command_map[name] = foo;
-	}
+	class Console{
+	public:
+		static void addCommand(void(*foo)(), std::string name);
+	
+		static void run(std::string command_name);
+	
+		static void print(std::string str, const glm::vec3& color = {1,1,1});
+	
+		static void AttachToLogging();
 
-	void run(std::string command_name){
-		if(name_command_map.count(command_name)){
-			name_command_map[command_name]();
-		}else{
-			std::cout<<"No such command as \""<<command_name<<"\""<<std::endl;
-		}
-	}
+	private:
 
-	void print(std::string str, const glm::vec3& color = {1,1,1}){
-		createConsoleMessage(str, color);
-		std::cout<<str<<std::endl;
-	}
+		inline static std::map<std::string, void(*)()> name_command_map;
+
+		static void logToConsole(const std::string& message, salt::Logging::LoggingLevel level);
+
+		friend class Application;
+
+
+	};
 
 }

@@ -52,6 +52,7 @@ class MyApp : public salt::Application {
   Text * text;
 
 	void onInit() override {
+    salt::Console::AttachToLogging();
 		setFPS(60);
     salt::Input::CaptureMouse();
 
@@ -63,13 +64,14 @@ class MyApp : public salt::Application {
     salt::ECS::Entity player = createPlayerEntity();
     createPlanetEntity();
 
-    
+    /*
     salt::Console::addCommand(&foo, "hw");
     salt::Console::addCommand(&foo, "hw");
     salt::Console::run("nc");
     salt::Console::run("hw");
     salt::Console::print("test console", {1,1,0});
-    
+    */
+    //salt::Logging::Warning("test");
 
     font = new Font("./res/verdanai.ttf", 128);
     text = new Text();

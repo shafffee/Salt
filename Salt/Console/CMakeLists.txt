@@ -1,4 +1,4 @@
-add_library(Console Console.h Console.cpp ConsoleEntity.h)
+add_library(Console Console.h Console.cpp ConsoleEntity.h ConsoleEntity.cpp)
 
 target_include_directories(Console PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

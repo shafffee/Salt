@@ -1,4 +1,4 @@
-add_library(Core Application.h Application.cpp Core.h EntryPoint.h Window.h)
+add_library(Core Application.h Application.cpp Core.h EntryPoint.h EntryPoint.cpp Window.h)
 
 target_include_directories(Core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
