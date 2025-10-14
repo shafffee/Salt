@@ -68,7 +68,7 @@ class MyApp : public salt::Application {
     salt::Console::addCommand(&foo, "hw");
     salt::Console::run("nc");
     salt::Console::run("hw");
-    salt::Console::print("test console");
+    salt::Console::print("test console", {1,1,0});
     
 
     font = new Font("./res/verdanai.ttf", 128);

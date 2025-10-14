@@ -22,7 +22,7 @@ void main()
     // Прoверяем, что handle не нулевой
     if (!(material.texture_handle.x == 0u && material.texture_handle.y == 0u)){
         FragColor = material.color;
-        FragColor.a = texture(sampler2D(material.texture_handle), vTexCoords).r;
+        FragColor.a = material.color.a*texture(sampler2D(material.texture_handle), vTexCoords).r;
     }
     else
         FragColor = vec4(1,0,1,1);

@@ -26,8 +26,8 @@ namespace salt::Console {
 		}
 	}
 
-	void print(std::string str){
-		createConsoleMessage(str);
+	void print(std::string str, const glm::vec3& color = {1,1,1}){
+		createConsoleMessage(str, color);
 		std::cout<<str<<std::endl;
 	}
 
