@@ -4,7 +4,7 @@
 
 #define CONSOLE_FONT "./Salt/res/fonts/JetBrains_Mono/static/JetBrainsMono-Medium.ttf"
 #define CONSOLE_FONT_RES 128
-#define CONSOLE_FONT_SIZE 0.1
+#define CONSOLE_FONT_SIZE 0.05
 
 #define MESSAGE_LIFE_TIME       200
 #define MESSAGE_DISSAPEAR_TIME  100

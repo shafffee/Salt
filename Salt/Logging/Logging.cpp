@@ -18,6 +18,8 @@ namespace salt{
 
     void Logging::Log(const std::string& message, Logging::LoggingLevel level){
 
+        history.push_back({message, level});
+
         if(LOG_TO_CMD){
             if(level == DEBUG) std::cout<<"[DEBUG]  \t";
             if(level == WARNING) std::cout<<"[WARNING]  \t";
@@ -33,6 +35,9 @@ namespace salt{
 
     void Logging::AttachConsoleLogging( void (*log_to_console)(const std::string&, LoggingLevel) ){
         _log_to_console = log_to_console;
+        for(auto log: history){
+            if(_log_to_console)_log_to_console(log.message, log.level);
+        }
     };
 
 
