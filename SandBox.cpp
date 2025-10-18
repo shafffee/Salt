@@ -52,6 +52,7 @@ class MyApp : public salt::Application {
   Text * text;
 
 	void onInit() override {
+    //createConsoleEntity(this);
     salt::Console::AttachToLogging();
 		setFPS(60);
     salt::Input::CaptureMouse();

@@ -16,21 +16,18 @@ public:
 };
 inline static salt::ECS::Component<c_message> C_MESSAGE;
 
-inline static void s_message(salt::ECS::Entity e)
-{
-     e.component<c_message>(C_MESSAGE)->ticks += 1;
-     int ticks = e.component<c_message>(C_MESSAGE)->ticks;
-     glm::vec3 color = e.component<c_message>(C_MESSAGE)->color;
+static void s_message(salt::ECS::Entity e){
+    e.component<c_message>(C_MESSAGE)->ticks += 1;
+    int ticks = e.component<c_message>(C_MESSAGE)->ticks;
+    glm::vec3 color = e.component<c_message>(C_MESSAGE)->color;
 
-     if( ticks>MESSAGE_LIFE_TIME){
-        float a = 1.0f*(MESSAGE_DISSAPEAR_TIME-(ticks-MESSAGE_LIFE_TIME))/MESSAGE_DISSAPEAR_TIME;
-        if(e.component<c_model>(C_MODEL)->text) e.component<c_model>(C_MODEL)->text->setColor({color.r,color.g,color.b,a});
-     }
-     if( ticks>MESSAGE_LIFE_TIME+MESSAGE_DISSAPEAR_TIME) e.destroy();
-}
-
+    if( ticks>MESSAGE_LIFE_TIME){
+       float a = 1.0f*(MESSAGE_DISSAPEAR_TIME-(ticks-MESSAGE_LIFE_TIME))/MESSAGE_DISSAPEAR_TIME;
+       if(e.component<c_model>(C_MODEL)->text) e.component<c_model>(C_MODEL)->text->setColor({color.r,color.g,color.b,a});
+    }
+    if( ticks>MESSAGE_LIFE_TIME+MESSAGE_DISSAPEAR_TIME) e.destroy();
+};
 inline static salt::ECS::System S_MESSAGE(&s_message, C_MESSAGE | C_MODEL);
-
 
 
 inline static salt::ECS::Entity createConsoleMessage(const std::string& msg, const glm::vec3& color = {1,1,1}){
@@ -57,3 +54,7 @@ inline static salt::ECS::Entity createConsoleMessage(const std::string& msg, con
 
     return message;
 }
+
+
+
+

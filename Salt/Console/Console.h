@@ -9,6 +9,12 @@ namespace salt {
 
 	class Application;
 
+	struct ConsoleMessage{
+      std::string message;
+      uint64_t time_created;
+      // Constructor
+    };
+
 	class Console{
 	public:
 		static void addCommand(void(*foo)(), std::string name);

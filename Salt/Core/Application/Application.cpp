@@ -38,6 +38,9 @@ namespace salt {
 			salt::Renderer::Update();
 			onUpdate();
 
+			//add 1 to ticks time
+			ticks_passed +=1;
+
 			//wait until next frame
 			if (std::chrono::system_clock::now() < frame_end_time) {
 				std::this_thread::sleep_until(frame_end_time);
