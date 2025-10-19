@@ -1,4 +1,4 @@
-add_library(Core Core.h)
+add_library(Core Core.h Core.cpp)
 
 target_include_directories(Core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

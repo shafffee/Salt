@@ -11,17 +11,21 @@ namespace salt {
         static void Init() {};
 
         static void Update() {
+
+            std::vector<std::pair<uint64_t, int>> entitiesToProcess;
+            for (const auto& e : salt::ECS::EntityPack::id_index_map) {
+                entitiesToProcess.push_back(e);
+            }
+
             //for all allocated entities
-            for (uint64_t e = 0;e < ENTITIES_MAX;e++) {
-                if (salt::ECS::EntityPack::_is_allocated[e]) {
-                    //for all aded systems
-                    for (uint64_t s = 0;s < SYSTEMS_MAX;s++) {
+            for (auto e: entitiesToProcess) {
+                //for all aded systems
+                for (uint64_t s = 0;s < SYSTEMS_MAX;s++) {
                         //if entity has system, run
-                        if (EntityPack::_entities[e]._systems[s]==1) {
+                        if (EntityPack::_entities[e.second]._systems[s]==1) {
                             //passing an entity pointer to function
-                            SystemPack::_systems[s].run(Entity(e));
+                            SystemPack::_systems[s].run(Entity(e.first));
                         }
-                    }
                 }
             }
         }

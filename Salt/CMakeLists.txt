@@ -11,10 +11,10 @@ find_package(OpenGL REQUIRED)
 
 # My libs
 add_subdirectory(Logging/)
+add_subdirectory(Core/)
 add_subdirectory(ECS/)
 add_subdirectory(Utils/)
 add_subdirectory(Renderer/)
-add_subdirectory(Core/)
 add_subdirectory(Input/)
 add_subdirectory(UCSL/)
 add_subdirectory(Console/)

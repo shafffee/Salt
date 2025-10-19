@@ -13,7 +13,7 @@ namespace salt::ECS {
 	void SystemInstance::run(Entity e)
 	{
 		//entity does not exist (no components)
-		if (e._id_in_pack == 0) return;
+		if (!EntityPack::EntityWithIdExists(e._id)) return;
 		//function is not assigned
 		if (_foo == nullptr) return;
 		_foo(e);

@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "Planet.h"
 
+#include "ConsoleEntity.h"
+
 
 void camera3D_controller(Camera* cam){
 
@@ -53,6 +55,7 @@ class MyApp : public salt::Application {
 
 	void onInit() override {
     //createConsoleEntity(this);
+    createConsoleEntity();
     salt::Console::AttachToLogging();
 		setFPS(60);
     salt::Input::CaptureMouse();
@@ -103,6 +106,12 @@ class MyApp : public salt::Application {
     if (salt::Input::IsKeyPressed(SALT_KEY_B)){
       freecam = false;
       salt::Renderer::setCamera(camera);
+    }
+
+    if (salt::Input::IsKeyPressed(SALT_KEY_T)){
+      //salt::Console::print("Current tick is: "+std::to_string(salt::Ticks::current()));
+      salt::Logging::Debug("Current tick is: "+std::to_string(salt::Ticks::current()));
+
     }
 
 	}

@@ -4,14 +4,16 @@
 #include <map>
 #include <glm/glm.hpp>
 #include "Logging.h"
+#include <vector>
 
 namespace salt {
 
 	class Application;
 
 	struct ConsoleMessage{
-      std::string message;
-      uint64_t time_created;
+      std::string message = "";
+      glm::vec3 color = {1,1,1};
+      uint64_t time_created = 0;
       // Constructor
     };
 
@@ -22,8 +24,11 @@ namespace salt {
 		static void run(std::string command_name);
 	
 		static void print(std::string str, const glm::vec3& color = {1,1,1});
-	
+
 		static void AttachToLogging();
+
+		inline static std::vector<ConsoleMessage> history;
+
 
 	private:
 
@@ -32,7 +37,6 @@ namespace salt {
 		static void logToConsole(const std::string& message, salt::Logging::LoggingLevel level);
 
 		friend class Application;
-
 
 	};
 

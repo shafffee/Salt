@@ -7,7 +7,6 @@
 namespace salt {
 	class Application {
 	private:
-		uint64_t ticks_passed = 0;
 		double MAX_FPS = 60.0;
 		std::chrono::microseconds SINGLE_FRAME_TIME = std::chrono::microseconds(int(1000000.0 / MAX_FPS));
 	public:
@@ -21,7 +20,5 @@ namespace salt {
 		void defaultOnInit();
 		void defaultRun();
 		void defaultOnExit();
-
-		uint64_t getTicksPassed(){return ticks_passed;};
 	};
 }

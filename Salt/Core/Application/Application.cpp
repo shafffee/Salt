@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ECS.h"
 #include "Renderer.h"
+#include "Ticks.h"
 
 namespace salt {
 	void Application::setFPS(double fps_limit)
@@ -37,9 +38,7 @@ namespace salt {
 			salt::ECS::Update();
 			salt::Renderer::Update();
 			onUpdate();
-
-			//add 1 to ticks time
-			ticks_passed +=1;
+			salt::Ticks::Update();
 
 			//wait until next frame
 			if (std::chrono::system_clock::now() < frame_end_time) {

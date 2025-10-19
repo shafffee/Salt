@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include "ConsoleEntity.h"
+#include "Ticks.h"
 
 namespace salt {
 
@@ -25,15 +26,16 @@ namespace salt {
 		}
 	
 		void Console::print(std::string str, const glm::vec3& color){
-			createConsoleMessage(str, color);
+			history.push_back({str, color, salt::Ticks::current()});
+			//createConsoleMessage(str, color);
 		}
 
 
 
 		void Console::logToConsole(const std::string& message, salt::Logging::LoggingLevel level){
-			if(level == salt::Logging::LoggingLevel::DEBUG) createConsoleMessage(message, {1,1,1});
-			if(level == salt::Logging::LoggingLevel::WARNING) createConsoleMessage(message, {1,1,0});
-			if(level == salt::Logging::LoggingLevel::ERROR) createConsoleMessage(message, {1,0,0});
+			if(level == salt::Logging::LoggingLevel::DEBUG) Console::print(message, {1,1,1});
+			if(level == salt::Logging::LoggingLevel::WARNING) Console::print(message, {1,1,0});
+			if(level == salt::Logging::LoggingLevel::ERROR) Console::print(message, {1,0,0});
 		}
 
 		void Console::AttachToLogging(){
