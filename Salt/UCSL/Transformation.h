@@ -16,25 +16,40 @@ struct c_transformation {
 public:
 
     // position | pos | x,y,z
-    glm::vec3 position = glm::vec3(0.0f);
-    glm::vec3& pos = position;
-    float& x = pos.x;
-    float& y = pos.y;
-    float& z = pos.z;
+
+    union {
+        glm::vec3 position;
+        glm::vec3 pos;
+        
+        // Anonymous struct (compiler extension - check your compiler support)
+        struct {
+            float x, y, z;
+        };
+    };
 
     //  size | scale | width,height,depth
-    glm::vec3 size = glm::vec3(1.0f);
-    float& width = size.x;
-    float& height = size.y;
-    float& depth = size.z;
-    glm::vec3& scale = size;
+    union {
+        glm::vec3 size;
+        glm::vec3 scale;
+        
+        // Anonymous struct (compiler extension - check your compiler support)
+        struct {
+            float width, height, depth;
+        };
+    };
 
     // rotation | rot | roll,pitch,yaw
-    glm::vec3 rotation = glm::vec3(0.0f);
-    glm::vec3& rot = rotation;
-    float& roll = rot.x;
-    float& pitch = rot.y;
-    float& yaw = rot.z;
+    union {
+        glm::vec3 rotation;
+        glm::vec3 rot;
+        
+        // Anonymous struct (compiler extension - check your compiler support)
+        struct {
+            float roll, pitch, yaw;
+        };
+    };
+
+    c_transformation() : position(0.0f), size(1.0f), rotation(0.0f) {}
 
     glm::mat4 getTransformationMatrix(){
         // Position matrix (translation)

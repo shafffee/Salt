@@ -11,13 +11,35 @@ namespace salt {
 
 
 
+
+		// Базовый интерфейс для всех ComponentInstance (for delete entity)
+		class IComponentInstance {
+		public:
+			virtual ~IComponentInstance() = default;
+			virtual void clearEntityData(uint64_t id) = 0;
+		};
+
 		/*
 		----COMPONENT INSTANCE----
 		a map of structs
 		-------------------
 		*/
 		template <class T>
-		class ComponentInstance {
+		class ComponentInstance:public IComponentInstance {
+		public:
+
+			//returns pointer to data for a certain entity
+			T* getComponentData(uint64_t entityId) {
+
+				if (entity_component_map.count(entityId)) {
+					return &entity_component_map[entityId];
+				}
+				//creating empty data if not found
+				entity_component_map[entityId] = {};
+				//salt::Logging::Error("Trying to get component data that does not exist for an entity");
+				return &entity_component_map[entityId];
+			}
+
 		private:
 			std::map<uint64_t, T> entity_component_map; //stores an entity id as a key and component data as a value
 
@@ -30,6 +52,15 @@ namespace salt {
 				this->_required_components = other._required_components;
 				return *this;
 			};
+
+			//delete 
+			void clearEntityData(uint64_t id){
+				if(entity_component_map.count(id)){
+					entity_component_map.erase(id);
+				}
+			}
+
+
 
 			friend class  ComponentPack;
 			friend static void Update();
@@ -54,7 +85,7 @@ namespace salt {
 		class ComponentPack {
 		private:
 			inline static uint64_t _components_count = 0;				//number of component instances currently added
-			inline static std::shared_ptr<void> _components[COMPONENT_TYPES_MAX + 1];
+			inline static std::shared_ptr<IComponentInstance> _components[COMPONENT_TYPES_MAX + 1]= {};
 
 		public:
 			//called by Component on create
@@ -72,6 +103,35 @@ namespace salt {
 				_components[_components_count] = std::shared_ptr<ComponentInstance<T>>(new ComponentInstance<T>());
 				return _components_count;
 			};
+
+			inline static void deleteEntityData(uint64_t id) {
+				for(uint64_t i = 1; i <= _components_count; i++) {
+					if (_components[i]) {
+						_components[i]->clearEntityData(id);
+					}
+				}
+			};
+
+
+			template <class T>
+			inline static std::shared_ptr<ComponentInstance<T>> GetComponentInstance(uint64_t componentId) {
+				if (componentId > 0 && componentId <= _components_count && _components[componentId]) {
+					return std::static_pointer_cast<ComponentInstance<T>>(_components[componentId]);
+				}
+				salt::Logging::Error("Trying to get component instance that does not exist");
+				return nullptr;
+			}
+
+/*
+			inline static void clearEntityData(uint64_t id) {
+				for (uint64_t c = 1;c < COMPONENT_TYPES_MAX + 1;c++) {
+                        if(_components[c]->entity_component_map.count(id) ) {
+                        	_components[c]->entity_component_map.erase(e._id);
+                        }
+                }
+			};
+*/
+
 			friend static void Update();
 			friend class Entity;
 			template <class U>

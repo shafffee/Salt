@@ -31,7 +31,10 @@ static void s_message(salt::ECS::Entity e){
        float a = 1.0f*(MESSAGE_DISSAPEAR_TIME-(ticks-MESSAGE_LIFE_TIME))/MESSAGE_DISSAPEAR_TIME;
        if(e.component<c_model>(C_MODEL)->text) e.component<c_model>(C_MODEL)->text->setColor({color.r,color.g,color.b,a});
     }
-    if( ticks>MESSAGE_LIFE_TIME+MESSAGE_DISSAPEAR_TIME) e.destroy();
+    if( ticks>MESSAGE_LIFE_TIME+MESSAGE_DISSAPEAR_TIME){
+        std::cout<<ticks<<std::endl;
+        e.destroy();
+    }
 };
 inline static salt::ECS::System S_MESSAGE(&s_message, C_MESSAGE | C_MODEL);
 
@@ -71,21 +74,17 @@ static void s_console(salt::ECS::Entity e){
 
     for(int i = salt::Console::history.size()-1; i>=0;i--){
         if(salt::Console::history[i].time_created != salt::Ticks::current()-1) break;
-        std::cout<<salt::Console::history[i].message<<std::endl;
         e.component<c_console>(C_CONSOLE)->messages.push_back(createConsoleMessage(salt::Console::history[i].message, salt::Console::history[i].color));
     }
 
     
     //delete expired messages
-    std::cout<<e.component<c_console>(C_CONSOLE)->messages.size()<<"\t";
     for(int i=0;i<e.component<c_console>(C_CONSOLE)->messages.size(); i++){
         if(e.component<c_console>(C_CONSOLE)->messages[i].isNull()){
-            std::cout<<"deleting "<<i<<"\t";
             e.component<c_console>(C_CONSOLE)->messages.erase(e.component<c_console>(C_CONSOLE)->messages.begin()+i);
             i-=1;
         }
     }
-    std::cout<<e.component<c_console>(C_CONSOLE)->messages.size()<<std::endl;
 
     
 

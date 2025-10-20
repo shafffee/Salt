@@ -83,7 +83,7 @@ namespace salt {
 				_entities[first_empty_slot] = EntityInstance(components, systems);
 				
 				next_id+=1;
-				id_index_map.insert({next_id, first_empty_slot});
+				id_index_map.insert({next_id, (int)first_empty_slot});
 				return next_id; // starts from 1 to leave 0 for broken entities
 			};
 			//deletes entity (but actually just allows to override it if needed)
@@ -98,6 +98,8 @@ namespace salt {
 
 				_is_allocated[index] = false;
 				id_index_map.erase(id);
+
+				salt::ECS::ComponentPack::deleteEntityData(id);
 
 				return;
 			};
@@ -159,14 +161,21 @@ namespace salt {
 					//return nullptr;
 				}
 
-				// Retrieve the shared_ptr<void> from the component pack
-				auto& component_instance = salt::ECS::ComponentPack::_components[c._id_in_pack];
-				// Cast it to a shared_ptr<std::map<...>> using static_pointer_cast
-				auto map_ptr = std::static_pointer_cast<std::map<uint64_t, T>>(component_instance);
-				// Access the element in the map and create a shared_ptr<T> that shares ownership
-				T& element = (*map_ptr)[EntityPack::getIndexInPack(_id)];
-				return std::shared_ptr<T>(map_ptr, &element); // Aliasing constructor
-				//return component pointer
+				 auto component_instance = ComponentPack::GetComponentInstance<T>(c._id_in_pack);
+    			if (!component_instance) {
+					Logging::Error("Failed to get component instance");
+        			return nullptr;
+    			}
+			// Получаем данные компонента для этой entity
+    		T* data = component_instance->getComponentData(_id);
+    		if (!data) {
+        		Logging::Error("Failed to get data from component instance");
+        		return nullptr;
+    		}
+    
+    		// Создаем shared_ptr с aliasing constructor
+    		return std::shared_ptr<T>(component_instance, data);
+
 			};
 			void destroy() {
 				if (EntityPack::EntityWithIdExists(_id) == 0) {
