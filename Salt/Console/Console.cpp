@@ -11,7 +11,7 @@ namespace salt {
 
 		void Console::addCommand(void(*foo)(), std::string name){
 			if(name_command_map.count(name)){
-				std::cout<<"Command \""<<name<<"\" has already been registered"<<std::endl;
+				salt::Logging::Error("Command \""+name+"\" has already been registered");
 				return;
 			}
 			name_command_map[name] = foo;
@@ -21,7 +21,7 @@ namespace salt {
 			if(name_command_map.count(command_name)){
 				name_command_map[command_name]();
 			}else{
-				std::cout<<"No such command as \""<<command_name<<"\""<<std::endl;
+				salt::Logging::Error("No such command as \""+command_name+"\"");
 			}
 		}
 	

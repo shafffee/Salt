@@ -32,7 +32,6 @@ static void s_message(salt::ECS::Entity e){
        if(e.component<c_model>(C_MODEL)->text) e.component<c_model>(C_MODEL)->text->setColor({color.r,color.g,color.b,a});
     }
     if( ticks>MESSAGE_LIFE_TIME+MESSAGE_DISSAPEAR_TIME){
-        std::cout<<ticks<<std::endl;
         e.destroy();
     }
 };

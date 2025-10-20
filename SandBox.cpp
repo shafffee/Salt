@@ -110,8 +110,7 @@ class MyApp : public salt::Application {
 
     if (salt::Input::IsKeyPressed(SALT_KEY_T)){
       //salt::Console::print("Current tick is: "+std::to_string(salt::Ticks::current()));
-      salt::Logging::Debug("Current tick is: "+std::to_string(salt::Ticks::current()));
-
+      salt::Console::print("Current tick is: "+std::to_string(salt::Ticks::current()));
     }
 
 	}
