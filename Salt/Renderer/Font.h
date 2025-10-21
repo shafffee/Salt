@@ -154,6 +154,14 @@ struct Font{
     int width = 0;      //0-auto based on height
     int height = 0;     //0-auto based on width
 
+    bool operator!=(const Font& other) const {
+        return !(*this == other);
+    }
+    
+    bool operator==(const Font& other) const {
+        return this->id == other.id;
+    }
+
     Font(){};
 
     Font(std::string filepath, int height = 48): width(0), height(height){

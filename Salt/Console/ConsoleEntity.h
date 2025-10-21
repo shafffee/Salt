@@ -8,8 +8,8 @@
 #define CONSOLE_FONT_RES 128
 #define CONSOLE_FONT_SIZE 0.05
 
-#define MESSAGE_LIFE_TIME       200
-#define MESSAGE_DISSAPEAR_TIME  100
+#define MESSAGE_LIFE_TIME       100
+#define MESSAGE_DISSAPEAR_TIME  50
 
 struct c_message {
 public:
@@ -54,6 +54,7 @@ inline static salt::ECS::Entity createConsoleMessage(const std::string& msg, con
     message.component<c_transformation>(C_TRANSFORMATION)->height = CONSOLE_FONT_SIZE;
 
     //sprite
+    //message.component<c_model>(C_MODEL)->sprite = new Sprite("./res/kenney_pixelshmup/Ships/ship_0022.png");
     message.component<c_model>(C_MODEL)->text = new Text(msg, Font(CONSOLE_FONT,CONSOLE_FONT_RES), {color.r,color.g,color.b,1});
     message.component<c_model>(C_MODEL)->layer = 100;
 

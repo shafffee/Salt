@@ -26,17 +26,20 @@ class Text: public Model
         }
 
         void setFont(Font font){
-            this->font = font;
-            regenerateModel();
+            if(this->font != font){
+                changeFont(font);
+            }
         }
         void setString(const std::string& str){
-            this->str = str;
-            regenerateModel();
+            if(this->str != str){
+                changeStr(str);
+            }
         }
 
         void setColor(const glm::vec4& color){
-            this->color = color;
-            regenerateModel();
+            if(this->color != color){
+                changeColor(color);
+            }
         }
 
     private:
@@ -110,6 +113,26 @@ class Text: public Model
                 //adding mesh (rect with texture)
                 Model::meshes.push_back(Mesh(vertices, indices, mat));
                 x += ch.Advance >> 6;
+            }
+        };
+
+        void changeFont(Font new_font){
+            font = new_font;
+            //regenerate model because scale is dependent on font size
+            regenerateModel();
+        };
+
+        void changeStr(const std::string& new_str){
+            str = new_str;
+            regenerateModel();
+        };
+
+        //optimization
+        void changeColor(const glm::vec4& new_color){
+            this->color = new_color;
+            //regenerateModel();
+            for(int i=0; i< Model::meshes.size();i++){
+                Model::meshes[i].material.color=color;
             }
         };
 
