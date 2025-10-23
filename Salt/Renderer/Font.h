@@ -115,13 +115,14 @@ private:
 
 
         inline static uint64_t FontFromFile(std::string filepath, int width, int height){
-            //if texture with the same label is already loaded
-            //if(name_id_map.count()){
-            //    return name_id_map[name];
-            //}
-            //else
+            
+            std::string name = filepath+"_"+std::to_string(width)+"x"+std::to_string(height);
 
-            std::string name = filepath;
+            //if texture with the same label is already loaded
+            if(name_id_map.count(name)){
+                return name_id_map[name];
+            }
+            //else
 
             fonts_loaded+=1;
             uint32_t id = fonts_loaded;
