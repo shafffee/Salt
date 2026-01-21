@@ -3,6 +3,8 @@
 #include "Planet.h"
 
 #include "ConsoleEntity.h"
+#include "FPS_Counter.h"
+
 
 
 void camera3D_controller(Camera* cam){
@@ -54,10 +56,10 @@ class MyApp : public salt::Application {
   Text * text;
 
 	void onInit() override {
-    //createConsoleEntity(this);
-    createConsoleEntity();
-    salt::Console::AttachToLogging();
-		setFPS(60);
+		
+    setFPSLimit(60);
+    createFPSCounter();
+
     salt::Input::CaptureMouse();
 
     camera = new Camera();

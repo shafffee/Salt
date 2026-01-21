@@ -2,9 +2,13 @@
 #include "ECS.h"
 #include "Renderer.h"
 #include "Ticks.h"
+#include "ConsoleEntity.h"
 
 namespace salt {
-	void Application::setFPS(double fps_limit)
+
+	int Application::getFPS(){return fps;};
+	
+	void Application::setFPSLimit(double fps_limit)
 	{
 		MAX_FPS = fps_limit;
 		SINGLE_FRAME_TIME = std::chrono::microseconds(int(1000000.0 / MAX_FPS));
@@ -18,6 +22,11 @@ namespace salt {
 		salt::Input::Init();
 		//run user-defined init
 		salt::ECS::Init();
+
+		//connect console
+		createConsoleEntity();
+		salt::Console::AttachToLogging();
+
 		onInit();
 	}
 
@@ -29,6 +38,7 @@ namespace salt {
 		//main cycle
 		while (true)
 		{
+			
 			frame_end_time += SINGLE_FRAME_TIME;
 
 			//exit
@@ -43,6 +53,8 @@ namespace salt {
 			//wait until next frame
 			if (std::chrono::system_clock::now() < frame_end_time) {
 				std::this_thread::sleep_until(frame_end_time);
+			}else{
+				frame_end_time = std::chrono::system_clock::now();
 			}
 		}
 	}

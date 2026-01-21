@@ -2,7 +2,6 @@
 #include "ECS.h"
 #include "UCSL.h"
 #include "Console.h"
-#include <iostream>
 
 #define CONSOLE_FONT "./Salt/res/fonts/JetBrains_Mono/static/JetBrainsMono-Medium.ttf"
 #define CONSOLE_FONT_RES 128
